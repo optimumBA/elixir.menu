@@ -1,0 +1,331 @@
+{
+  "reviewed": "2026-10-06",
+  "status": "Choose and configure each library against its installed-version documentation.",
+  "instruction": "Select an optional tool only when the application's requirements match its use case. Explain the selection, check compatibility with the project's lockfile, and follow its installed-version documentation. Do not install the whole menu.",
+  "groups": [
+    {
+      "id": "optional-accounts",
+      "title": "Accounts and product controls",
+      "items": [
+        {
+          "id": "social-login",
+          "job": "Social login and OIDC",
+          "tool": "Assent",
+          "when": "Users need to sign in with Google, GitHub, Apple or an OpenID Connect provider.",
+          "use": "Integrate provider authentication with the application's existing accounts and sessions.",
+          "boundary": "Account linking, session management and permissions remain application concerns. SAML is a separate requirement.",
+          "sources": [
+            [
+              "Assent",
+              "https://github.com/pow-auth/assent"
+            ]
+          ]
+        },
+        {
+          "id": "rate-limits",
+          "job": "Rate limiting",
+          "tool": "Hammer",
+          "when": "Login attempts, API calls, uploads or expensive actions need limits.",
+          "use": "Define limits by actor, operation and time window; choose a backend that matches the deployment.",
+          "boundary": "A node-local counter does not automatically enforce a cluster-wide quota. Choose the algorithm's burst behavior deliberately.",
+          "sources": [
+            [
+              "Hammer",
+              "https://hexdocs.pm/hammer/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "feature-flags",
+          "job": "Feature flags",
+          "tool": "FunWithFlags",
+          "when": "Features need gradual rollout, per-customer access or an operational off switch.",
+          "use": "Choose an Ecto or Redis persistence adapter and configure synchronization between nodes.",
+          "boundary": "Keep permission checks separate from rollout flags. Remove expired flags and restrict the management interface.",
+          "sources": [
+            [
+              "FunWithFlags",
+              "https://hexdocs.pm/fun_with_flags/readme.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-files",
+      "title": "Files and documents",
+      "items": [
+        {
+          "id": "object-storage",
+          "job": "Object storage",
+          "tool": "ExAws.S3",
+          "when": "Uploads need to live in an S3 or compatible object store.",
+          "use": "Use ExAws with its S3 service module for object operations and signed URLs. In a LiveView app, connect it to the upload flow.",
+          "boundary": "The storage service, credentials, access rules and lifecycle policy are separate. Check which operations a compatible service actually supports.",
+          "sources": [
+            [
+              "ExAws.S3",
+              "https://hexdocs.pm/ex_aws_s3/ExAws.S3.html"
+            ]
+          ]
+        },
+        {
+          "id": "image-processing",
+          "job": "Image processing",
+          "tool": "Image",
+          "when": "The product needs thumbnails, resized uploads, image conversion or watermarks.",
+          "use": "Process images through the libvips-backed Image API; use Oban for work that needs retries.",
+          "boundary": "Vix/libvips introduces native runtime requirements. Check the deployment target and required codecs, and limit input dimensions and processing work.",
+          "sources": [
+            [
+              "Image",
+              "https://hexdocs.pm/image/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "pdf-generation",
+          "job": "PDF generation",
+          "tool": "ChromicPDF",
+          "when": "Invoices, reports or other HTML documents need downloadable PDFs.",
+          "use": "Render application-owned HTML and CSS through a managed Chrome process.",
+          "boundary": "Chrome is an additional runtime dependency; PDF/A conversion also uses Ghostscript. Isolate rendering and control access to external resources.",
+          "sources": [
+            [
+              "ChromicPDF",
+              "https://hexdocs.pm/chromic_pdf/ChromicPDF.html"
+            ]
+          ]
+        },
+        {
+          "id": "csv",
+          "job": "CSV import and export",
+          "tool": "NimbleCSV",
+          "when": "Users need bulk uploads, data exports or integrations through CSV files.",
+          "use": "Parse and write streams; validate each imported row through the application's business rules.",
+          "boundary": "CSV parsing does not validate field types or business rules. Define malformed-row handling and spreadsheet formula escaping for exports.",
+          "sources": [
+            [
+              "NimbleCSV",
+              "https://hexdocs.pm/nimble_csv/NimbleCSV.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-interfaces",
+      "title": "APIs and collaboration",
+      "items": [
+        {
+          "id": "openapi",
+          "job": "Documented HTTP APIs",
+          "tool": "OpenApiSpex",
+          "when": "External consumers need an OpenAPI contract for the Phoenix API.",
+          "use": "Describe operations and schemas, validate requests, and test responses against the specification.",
+          "boundary": "A schema does not enforce ownership or authorization. Keep the published contract aligned with application behavior.",
+          "sources": [
+            [
+              "OpenApiSpex",
+              "https://hexdocs.pm/open_api_spex/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "graphql",
+          "job": "GraphQL APIs",
+          "tool": "Absinthe",
+          "when": "Clients specifically need GraphQL queries, mutations or subscriptions.",
+          "use": "Expose the existing business layer through a schema; use Dataloader where batching is needed.",
+          "boundary": "Resolvers still need authorization and query-cost limits. Ordinary JSON endpoints remain simpler when GraphQL adds no client benefit.",
+          "sources": [
+            [
+              "Absinthe",
+              "https://hexdocs.pm/absinthe/overview.html"
+            ]
+          ]
+        },
+        {
+          "id": "presence",
+          "job": "Who is online",
+          "tool": "Phoenix Presence",
+          "when": "Chat, collaborative screens or live rooms need connected-user state.",
+          "use": "Track presence metadata and broadcast joins and leaves through Phoenix's existing realtime infrastructure.",
+          "boundary": "Presence is ephemeral and eventually consistent. It is not a durable audit trail, access-control system or editing-conflict resolver.",
+          "sources": [
+            [
+              "Phoenix Presence",
+              "https://hexdocs.pm/phoenix/Phoenix.Presence.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-international",
+      "title": "Languages, locales and money",
+      "items": [
+        {
+          "id": "translations",
+          "job": "Translated interface text",
+          "tool": "Gettext",
+          "when": "The application needs interface copy in multiple languages.",
+          "use": "Use the Gettext integration already present in typical Phoenix projects; maintain translation catalogs and plural forms.",
+          "boundary": "It does not translate user-authored content automatically. Dates, amounts and units need locale-aware formatting too.",
+          "sources": [
+            [
+              "Gettext",
+              "https://hexdocs.pm/gettext/Gettext.html"
+            ]
+          ]
+        },
+        {
+          "id": "localization",
+          "job": "Localized dates and numbers",
+          "tool": "Localize",
+          "when": "Dates, numbers, currencies and units must follow the user's locale.",
+          "use": "Use CLDR-based formatting and parsing. For new projects, evaluate Localize as the documented successor to the ex_cldr family.",
+          "boundary": "Existing ex_cldr applications need a planned migration. Check runtime requirements and package locale data for deployment.",
+          "sources": [
+            [
+              "Localize",
+              "https://hexdocs.pm/localize/readme.html"
+            ],
+            [
+              "ex_cldr migration notice",
+              "https://hexdocs.pm/ex_cldr/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "money",
+          "job": "Currency amounts",
+          "tool": "Money (ex_money)",
+          "when": "Prices, invoices or balances need explicit currencies and decimal arithmetic.",
+          "use": "Represent amount and currency together and make rounding rules explicit.",
+          "boundary": "This is not payment processing, tax calculation or an accounting ledger. The package is ex_money; check its major-version migration notes.",
+          "sources": [
+            [
+              "Money",
+              "https://hexdocs.pm/ex_money/readme.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-ai",
+      "title": "AI features",
+      "items": [
+        {
+          "id": "llm-client",
+          "job": "Calling language models",
+          "tool": "ReqLLM",
+          "when": "The product needs text generation, streamed responses or model tool calls through hosted APIs.",
+          "use": "Use a common Elixir interface to supported model providers and keep provider-specific settings explicit.",
+          "boundary": "Provider capabilities differ. The client does not supply evaluation, permission checks or a reliable autonomous workflow; test the exact model and features used.",
+          "sources": [
+            [
+              "ReqLLM",
+              "https://github.com/agentjido/req_llm"
+            ]
+          ]
+        },
+        {
+          "id": "vector-search",
+          "job": "Vector similarity search",
+          "tool": "pgvector",
+          "when": "Embeddings are useful for semantic retrieval or recommendations alongside existing PostgreSQL data.",
+          "use": "Enable the PostgreSQL vector extension and use the Elixir pgvector integration with Ecto or Postgrex.",
+          "boundary": "The library does not generate embeddings. Verify database-extension support, dimensions, indexes and retrieval quality against representative queries.",
+          "sources": [
+            [
+              "pgvector for Elixir",
+              "https://hexdocs.pm/pgvector/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "local-models",
+          "job": "Running pretrained models",
+          "tool": "Bumblebee + Nx",
+          "when": "Inference should run on infrastructure you control, using a supported pretrained model.",
+          "use": "Load supported model architectures with Bumblebee and serve predictions through Nx.Serving.",
+          "boundary": "Plan model memory, a suitable numerical backend and hardware. Model compatibility and licensing need to be checked individually.",
+          "sources": [
+            [
+              "Bumblebee",
+              "https://hexdocs.pm/bumblebee/Bumblebee.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-data",
+      "title": "Data processing",
+      "items": [
+        {
+          "id": "ingestion",
+          "job": "Message ingestion pipelines",
+          "tool": "Broadway",
+          "when": "The application consumes a stream from Kafka, RabbitMQ, SQS or another supported source.",
+          "use": "Build concurrent processing stages with batching, acknowledgements and back-pressure.",
+          "boundary": "The source connector determines delivery behavior. Keep handlers safe to retry; ordinary application jobs still fit Oban.",
+          "sources": [
+            [
+              "Broadway",
+              "https://hexdocs.pm/broadway/Broadway.html"
+            ]
+          ]
+        },
+        {
+          "id": "dataframes",
+          "job": "Tabular data analysis",
+          "tool": "Explorer",
+          "when": "Imports, analytics or reports need dataframe transformations over CSV, Parquet or similar datasets.",
+          "use": "Use typed series and dataframes for grouping, joining and transforming tabular data.",
+          "boundary": "The default Polars backend uses native code. Check deployment support and memory use; routine application queries still belong in Ecto.",
+          "sources": [
+            [
+              "Explorer",
+              "https://hexdocs.pm/explorer/Explorer.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-architecture",
+      "title": "A different application architecture",
+      "items": [
+        {
+          "id": "ash-architecture",
+          "job": "Declarative business applications",
+          "tool": "Ash",
+          "when": "Resources, actions, policies and derived APIs form a substantial part of the application.",
+          "use": "Evaluate Ash early as the domain layer beneath Phoenix, with only the extensions the product needs.",
+          "boundary": "This changes how business logic is modeled. It is an architectural choice, not a small utility to install beside an unchanged contexts design.",
+          "sources": [
+            [
+              "What is Ash?",
+              "https://hexdocs.pm/ash/what-is-ash.html"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "specialist_tracks": [
+    {
+      "tool": "Nerves",
+      "job": "Embedded devices and firmware",
+      "url": "https://hexdocs.pm/nerves/getting-started.html"
+    },
+    {
+      "tool": "Membrane",
+      "job": "Audio, video and streaming pipelines",
+      "url": "https://membrane.stream/"
+    }
+  ]
+}

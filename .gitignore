@@ -1,0 +1,22 @@
+node_modules/
+dist/
+.generated/
+.astro/
+__pycache__/
+.DS_Store
+.env*
+
+# Build exports: owners live in content/, assets/, and root licensing files.
+public/brand/
+public/*.md
+public/*.json
+public/menu.css
+public/menu.js
+public/reference.css
+public/reference.js
+public/app-types.css
+public/LICENSE
+public/NOTICE
+public/robots.txt
+public/sitemap.xml
+public/favicon.ico

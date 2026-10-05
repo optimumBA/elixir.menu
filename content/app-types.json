@@ -1,0 +1,221 @@
+{
+  "reviewed": "2026-10-06",
+  "title": "Choose an Elixir starting point",
+  "status": "Choose tools by application requirements and preserve existing project decisions.",
+  "types": [
+    {
+      "id": "command-line",
+      "name": "Command-line tool",
+      "short": "Developer tools, local automation and terminal applications.",
+      "start": "Mix + OptionParser",
+      "command": "mix new my_tool",
+      "explanation": "Keep command parsing separate from the modules that perform the work. OptionParser handles flags; the application owns help text, subcommands, output and exit codes.",
+      "boundary": "An escript needs Erlang/OTP on the target machine. Evaluate Burrito when distributing a bundled executable to users without that runtime, and test each supported OS and architecture.",
+      "sources": [
+        [
+          "Mix projects",
+          "https://hexdocs.pm/mix/Mix.Tasks.New.html"
+        ],
+        [
+          "OptionParser",
+          "https://hexdocs.pm/elixir/OptionParser.html"
+        ],
+        [
+          "Escript packaging",
+          "https://hexdocs.pm/mix/Mix.Tasks.Escript.Build.html"
+        ],
+        [
+          "Burrito",
+          "https://hexdocs.pm/burrito/readme.html"
+        ]
+      ]
+    },
+    {
+      "id": "library-project",
+      "name": "Library",
+      "short": "Reusable modules used by other Elixir applications.",
+      "start": "Mix",
+      "command": "mix new my_library",
+      "explanation": "Define a small public module API, examples and tests. Generate documentation with ExDoc; publish to Hex if the package is intended for reuse outside the project. Add a supervision tree only if the library owns long-lived processes.",
+      "boundary": "Choose supported Elixir/OTP versions and dependency constraints for consumers. A library does not need an HTTP server or database unless that is its purpose.",
+      "sources": [
+        [
+          "Mix projects",
+          "https://hexdocs.pm/mix/Mix.Tasks.New.html"
+        ],
+        [
+          "ExDoc",
+          "https://hexdocs.pm/ex_doc/readme.html"
+        ],
+        [
+          "Publishing to Hex",
+          "https://hexdocs.pm/hex/Mix.Tasks.Hex.Publish.html"
+        ]
+      ]
+    },
+    {
+      "id": "service-project",
+      "name": "Background service",
+      "short": "Workers, integrations and processes that keep running.",
+      "start": "Mix + OTP supervision",
+      "command": "mix new my_service --sup",
+      "explanation": "Use supervision for process lifecycles and recovery. Keep calculations and business operations in ordinary modules; introduce stateful processes where they are needed.",
+      "boundary": "Supervision does not persist work. Choose durable storage or a queue when recovery requires it. Add Plug + Bandit for a small HTTP interface if needed; use Mix releases for deployment.",
+      "sources": [
+        [
+          "Supervision",
+          "https://hexdocs.pm/elixir/Supervisor.html"
+        ],
+        [
+          "Bandit",
+          "https://hexdocs.pm/bandit/Bandit.html"
+        ],
+        [
+          "Mix releases",
+          "https://hexdocs.pm/mix/Mix.Tasks.Release.html"
+        ]
+      ]
+    },
+    {
+      "id": "web-project",
+      "name": "Web application or API",
+      "short": "Browser products, customer portals and HTTP APIs.",
+      "start": "Phoenix",
+      "command": "mix phx.new my_web_app",
+      "explanation": "Use Phoenix for routing, controllers and web application conventions. Add LiveView for server-driven interactive screens; an API-only product does not need a browser UI.",
+      "boundary": "Choose persistence from the product's needs. PostgreSQL + Ecto is our recommendation for shared relational web data, not a prerequisite for every Elixir program. Review generator options for API-only or database-free applications.",
+      "sources": [
+        [
+          "Phoenix generator options",
+          "https://hexdocs.pm/phoenix/Mix.Tasks.Phx.New.html"
+        ],
+        [
+          "Phoenix application guide",
+          "/variants/reference.html"
+        ],
+        [
+          "Phoenix setup recipe",
+          "/setup.md"
+        ]
+      ],
+      "start_note": "LiveView for interactive screens"
+    },
+    {
+      "id": "data-project",
+      "name": "Data analysis or machine learning",
+      "short": "Notebooks, data transformations and numerical models.",
+      "start": "Livebook; Mix for the application",
+      "command": null,
+      "explanation": "Use Livebook for interactive exploration, Explorer for tabular data, and Nx for numerical computation. Move reusable work into a Mix application when it needs a maintained API, tests or a service lifecycle.",
+      "boundary": "Hosted model calls, local inference and training are different requirements. Check native backends, memory and hardware before selecting a deployment environment.",
+      "sources": [
+        [
+          "Livebook",
+          "https://hexdocs.pm/livebook/readme.html"
+        ],
+        [
+          "Nx",
+          "https://hexdocs.pm/nx/Nx.html"
+        ],
+        [
+          "Explorer",
+          "https://hexdocs.pm/explorer/Explorer.html"
+        ]
+      ]
+    },
+    {
+      "id": "device-project",
+      "name": "Embedded device",
+      "short": "Hardware products, sensors and deployed Linux devices.",
+      "start": "Nerves",
+      "command": null,
+      "explanation": "Start from the Nerves installation and project guides for the target hardware. Build firmware with the system and libraries that the device requires.",
+      "boundary": "Hardware support, firmware updates and access to the device determine the setup. A web interface can be added when useful; it does not define the device application.",
+      "sources": [
+        [
+          "Nerves getting started",
+          "https://hexdocs.pm/nerves/getting-started.html"
+        ]
+      ]
+    },
+    {
+      "id": "media-project",
+      "name": "Audio or video system",
+      "short": "Streaming, transcoding and realtime media processing.",
+      "start": "Membrane + an OTP application",
+      "command": null,
+      "explanation": "Build media pipelines with the source, processing and output elements needed for the product. Phoenix may provide a separate control interface if there is a web UI.",
+      "boundary": "Protocols, codecs and native dependencies determine the pipeline and deployment. Ordinary file uploads do not require a media framework.",
+      "sources": [
+        [
+          "Membrane",
+          "https://membrane.stream/"
+        ]
+      ]
+    }
+  ],
+  "decisions": [
+    {
+      "title": "Choose the interface",
+      "body": "A CLI, reusable library, running service and web application have different starting points. Keep reusable business operations independent of the interface."
+    },
+    {
+      "title": "Choose persistence when needed",
+      "body": "Files can suit local configuration. SQLite can suit local relational data; PostgreSQL can suit a shared database. Ecto can be used independently of Phoenix. Disposable caches and process state are separate decisions."
+    },
+    {
+      "title": "Choose the deployment target",
+      "body": "A developer script, downloadable executable, deployed service and firmware image need different packaging. Decide which runtimes and native libraries can be present on the target."
+    }
+  ],
+  "agent_steps": [
+    {
+      "title": "Read the existing project",
+      "body": "Start with README.md, mix.exs, mix.lock and runtime pins. For an existing application, preserve its architecture and follow its maintained workflow. Do not regenerate it."
+    },
+    {
+      "title": "State the application requirements",
+      "body": "Identify the interface, whether work must keep running, persistence needs, and deployment target. Choose one of the starting points above; a product may combine more than one. Do not assume Phoenix or PostgreSQL."
+    },
+    {
+      "title": "Check the environment",
+      "body": "Check elixir --version and mix --version. Follow the official Elixir installation guide if prerequisites are missing; respect existing version management. Install a web generator, database or specialist toolchain only for the selected path."
+    },
+    {
+      "title": "Generate in an empty destination",
+      "body": "Use the selected starter and its current documentation. The commands above are scaffolding examples, not complete applications. For the Phoenix web path, follow setup.md; for Nerves and Membrane, follow their own project guides."
+    },
+    {
+      "title": "Select libraries by requirement",
+      "body": "Read optional.md and add only tools whose use cases match the product. Check versions, native dependencies and deployment constraints. Record the reasons and setup in the project’s maintained documentation. Preserve its existing agent-guidance conventions."
+    },
+    {
+      "title": "Verify the actual application",
+      "body": "Run formatting, compilation and relevant tests. Exercise the real interface: CLI help, output and exit codes; service startup and recovery; HTTP behavior; or the target device. Verify the packaged artifact on the intended target and report what remains untested."
+    }
+  ],
+  "shared_checks": {
+    "title": "Checks for every Mix project",
+    "body": "Use mix format for formatting, address compiler warnings, and test behavior with ExUnit. Add Credo when its static checks provide useful feedback; it is optional for every application type. Keep the same checks in local work and CI.",
+    "sources": [
+      [
+        "Mix formatter",
+        "https://hexdocs.pm/mix/Mix.Tasks.Format.html"
+      ],
+      [
+        "ExUnit",
+        "https://hexdocs.pm/ex_unit/ExUnit.html"
+      ],
+      [
+        "Credo",
+        "https://hexdocs.pm/credo/overview.html"
+      ]
+    ]
+  },
+  "agent_guidance": {
+    "title": "Dependency guidance for agents",
+    "body": "Use usage_rules in any Mix project to collect dependency-authored instructions and find documentation. Follow the project’s existing conventions for where agents read guidance, keep Phoenix’s generated guidance when using its default setup, and refresh dependency rules when versions change.",
+    "url": "https://hexdocs.pm/usage_rules/readme.html",
+    "label": "usage_rules documentation"
+  }
+}

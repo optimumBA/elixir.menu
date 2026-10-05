@@ -1,0 +1,401 @@
+{
+  "name": "elixir.menu — Web application stack",
+  "edition": "01",
+  "reviewed": "2026-10-06",
+  "status": "Documentation-based recommendations; verify the selected dependencies together in your application.",
+  "scope": "Database-backed web products built by individuals and small teams",
+  "principle": "One default per job. Add a dependency when its job exists. Revisit a choice when a concrete requirement warrants it.",
+  "groups": [
+    {
+      "id": "foundation",
+      "title": "Application",
+      "description": "A Phoenix application, a database, and familiar conventions.",
+      "items": [
+        {
+          "id": "web",
+          "job": "Web framework",
+          "tool": "Phoenix",
+          "stage": "Start here",
+          "summary": "Routes, controllers, HTML and application conventions in one place.",
+          "why": "Start with one Phoenix application and its generated structure. Keep the standard HTTP server and asset setup until a measured requirement calls for a change.",
+          "boundary": "Phoenix does not choose every application policy for you. This guide supplies the next layer of defaults; it does not replace Phoenix.",
+          "next": "Use the official getting-started guide and a supported Elixir/OTP pair. Commit the resolved dependency lockfile.",
+          "sources": [
+            [
+              "Phoenix getting started",
+              "https://hexdocs.pm/phoenix/up_and_running.html"
+            ]
+          ]
+        },
+        {
+          "id": "ui",
+          "job": "Interactive interfaces",
+          "tool": "Phoenix LiveView",
+          "stage": "Start here",
+          "summary": "Build forms, dashboards and live updates alongside your Elixir code.",
+          "why": "Use HEEx and function components for markup, with LiveView for interactive screens. Start ordinary content pages as server-rendered HTML when they need no live process.",
+          "boundary": "Offline-first products, rich canvas editors and heavy local interaction can justify a dedicated client application. Add small JavaScript hooks for isolated browser behavior.",
+          "next": "Keep business rules in contexts; use LiveView for interaction and presentation.",
+          "sources": [
+            [
+              "LiveView documentation",
+              "https://hexdocs.pm/phoenix_live_view/Phoenix.LiveView.html"
+            ]
+          ]
+        },
+        {
+          "id": "styling",
+          "job": "Styling and components",
+          "tool": "Tailwind CSS + HEEx components",
+          "stage": "Start here",
+          "summary": "Own a small set of reusable components and the visual language around them.",
+          "why": "Use Tailwind for styling and HEEx function components to share markup and behavior. Keep theme tokens and application components in your project, where you can shape them around the product.",
+          "boundary": "Phoenix 1.8 includes daisyUI, but its generators do not require it. Keep daisyUI when its component classes and themes save useful work; it is optional, not the design system every product must adopt.",
+          "next": "Define the product’s type, spacing and color rules, then build the components repeated across its screens.",
+          "sources": [
+            [
+              "Phoenix 1.8 release",
+              "https://phoenixframework.org/blog/phoenix-1-8-released"
+            ],
+            [
+              "daisyUI customization",
+              "https://daisyui.com/docs/customize/"
+            ]
+          ]
+        },
+        {
+          "id": "data",
+          "job": "Database and queries",
+          "tool": "PostgreSQL + Ecto",
+          "stage": "Start here",
+          "summary": "One durable store, explicit queries, changesets and migrations.",
+          "why": "Use Ecto for data access and changesets, backed by PostgreSQL. Database constraints enforce invariants; transactions keep related writes together.",
+          "boundary": "Ecto is not Active Record: queries and persistence remain explicit. SQLite is reasonable for a genuinely embedded or single-file application, outside this web-product default.",
+          "next": "Use Ecto.Multi for multi-step transactions. Inspect slow queries and their plans before adding caches.",
+          "sources": [
+            [
+              "Ecto documentation",
+              "https://hexdocs.pm/ecto/Ecto.html"
+            ],
+            [
+              "Ecto.Multi",
+              "https://hexdocs.pm/ecto/Ecto.Multi.html"
+            ]
+          ]
+        },
+        {
+          "id": "domain",
+          "job": "Business logic",
+          "tool": "Phoenix contexts",
+          "stage": "Start here",
+          "summary": "Plain Elixir modules around the language of your product.",
+          "why": "Give related business operations a clear public API. Both LiveViews and controllers should call that API instead of implementing separate versions of the same rules.",
+          "boundary": "A context is an organizational boundary, not a process. Do not turn ordinary CRUD or pure business logic into a GenServer.",
+          "next": "Define public operations around the application’s domain. Call those operations from controllers, LiveViews and workers; keep database access behind the context boundary.",
+          "sources": [
+            [
+              "Phoenix contexts",
+              "https://hexdocs.pm/phoenix/contexts.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "accounts",
+      "title": "Accounts and permissions",
+      "description": "Authentication establishes identity. Your application still owns permissions.",
+      "items": [
+        {
+          "id": "auth",
+          "job": "Accounts and sign-in",
+          "tool": "phx.gen.auth",
+          "stage": "When needed",
+          "summary": "Start with Phoenix’s generated authentication.",
+          "why": "Use the authentication generator for a first-party web application. Phoenix 1.8 includes magic-link authentication and sudo-mode conventions; the generated code lives in your application.",
+          "boundary": "Authentication is not authorization. Enterprise SSO, external identity or complex organization requirements need their own deliberate integration.",
+          "next": "Read the generated code and current security guidance. Configure real email delivery before relying on magic links.",
+          "sources": [
+            [
+              "Authentication generator",
+              "https://hexdocs.pm/phoenix/mix_phx_gen_auth.html"
+            ]
+          ]
+        },
+        {
+          "id": "authorization",
+          "job": "Authorization",
+          "tool": "Scopes + context checks",
+          "stage": "When needed",
+          "summary": "Carry the actor into business operations and constrain data access.",
+          "why": "Pass the authenticated scope through context functions. Apply ownership and permission rules to reads and writes; test denied access as deliberately as the successful path.",
+          "boundary": "Scopes carry identity and context; they are not an automatic policy engine. Hidden buttons and client parameters are never sufficient access control.",
+          "next": "Pass the current scope into context operations. Test that another user cannot read or modify the protected resource, including through direct context calls.",
+          "sources": [
+            [
+              "Phoenix scopes",
+              "https://hexdocs.pm/phoenix/scopes.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "work",
+      "title": "Jobs and integrations",
+      "description": "Reliable background work and the integrations most products need.",
+      "items": [
+        {
+          "id": "jobs",
+          "job": "Durable background jobs",
+          "tool": "Oban",
+          "stage": "When needed",
+          "summary": "Retries and persistent jobs using the database you already run.",
+          "why": "Use Oban with PostgreSQL for work that must survive a process or application restart. Insert related jobs and domain changes within the same transaction.",
+          "boundary": "Jobs may be retried. Make side effects idempotent; uniqueness is not an exactly-once guarantee. Some advanced orchestration features belong to paid Oban Pro.",
+          "next": "Use separate queues for distinct workloads and monitor retries. An ordinary Task is suitable for disposable concurrent work, not a durable queue.",
+          "sources": [
+            [
+              "Oban documentation",
+              "https://hexdocs.pm/oban/Oban.html"
+            ]
+          ]
+        },
+        {
+          "id": "schedule",
+          "job": "Recurring tasks",
+          "tool": "Oban Cron",
+          "stage": "When needed",
+          "summary": "Put scheduled work in the same queue as other durable jobs.",
+          "why": "Use Oban.Cron for periodic job insertion. Keep execution, retries and operational visibility in the job system.",
+          "boundary": "A schedule is not a catch-up policy for time when the app is down. Define missed-run behavior explicitly; dynamic scheduling has different requirements.",
+          "next": "Set the intended timezone, check daylight-saving behavior where applicable, and keep workers idempotent.",
+          "sources": [
+            [
+              "Oban.Cron",
+              "https://hexdocs.pm/oban/Oban.Cron.html"
+            ]
+          ]
+        },
+        {
+          "id": "email",
+          "job": "Transactional email",
+          "tool": "Swoosh",
+          "stage": "When needed",
+          "summary": "Compose mail in Elixir and send through a delivery adapter.",
+          "why": "Use Swoosh, included in generated Phoenix applications, for account mail and product notifications. Use Oban when delivery needs durable retries.",
+          "boundary": "Swoosh is a library, not an email delivery service. The provider, verified domain and deliverability setup are separate operational choices.",
+          "next": "Keep development mail local. Test message content and recipient selection before enabling production delivery.",
+          "sources": [
+            [
+              "Swoosh documentation",
+              "https://hexdocs.pm/swoosh/Swoosh.html"
+            ]
+          ]
+        },
+        {
+          "id": "http",
+          "job": "Outgoing HTTP",
+          "tool": "Req",
+          "stage": "When needed",
+          "summary": "A readable client for calling external APIs.",
+          "why": "Use Req for request construction, response handling and client features rather than assembling a new HTTP abstraction for each integration.",
+          "boundary": "Timeouts, retries and error handling are part of the integration design. A retried payment or other side effect needs an idempotency strategy.",
+          "next": "Wrap each external service behind a small module. Use Req.Test for deterministic request tests.",
+          "sources": [
+            [
+              "Req documentation",
+              "https://hexdocs.pm/req/Req.html"
+            ],
+            [
+              "Req.Test",
+              "https://hexdocs.pm/req/Req.Test.html"
+            ]
+          ]
+        },
+        {
+          "id": "realtime",
+          "job": "Realtime notifications",
+          "tool": "Phoenix PubSub",
+          "stage": "When needed",
+          "summary": "Broadcast changes to connected parts of your application.",
+          "why": "Use Phoenix.PubSub to notify subscribed LiveViews or processes of a change. Persist important facts in PostgreSQL and load their current state when clients reconnect.",
+          "boundary": "PubSub is not a persistent message log. Multiple nodes require a suitable cluster or adapter configuration.",
+          "next": "Use Presence only when you actually need to track who is connected.",
+          "sources": [
+            [
+              "Phoenix.PubSub",
+              "https://hexdocs.pm/phoenix_pubsub/Phoenix.PubSub.html"
+            ]
+          ]
+        },
+        {
+          "id": "uploads",
+          "job": "File uploads",
+          "tool": "LiveView uploads",
+          "stage": "When needed",
+          "summary": "Progress, validation and direct-to-cloud upload support.",
+          "why": "Start with LiveView’s upload flow. For durable production attachments, pair it with object storage and store ownership and file metadata in PostgreSQL.",
+          "boundary": "An upload widget does not supply permanent storage. Ephemeral application disks are not a durable attachment store; client metadata does not establish file safety.",
+          "next": "Set size/type limits, authorize downloads, and implement the storage provider’s documented signing flow.",
+          "sources": [
+            [
+              "LiveView uploads",
+              "https://hexdocs.pm/phoenix_live_view/uploads.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "grow",
+      "title": "Queries and APIs",
+      "description": "Start with the tools already in the application or runtime.",
+      "items": [
+        {
+          "id": "search",
+          "job": "Product text search",
+          "tool": "PostgreSQL full-text search",
+          "stage": "When needed",
+          "summary": "Search your product’s data before operating another service.",
+          "why": "For ordinary application search, start with PostgreSQL text-search features and an appropriate index. Keep the query and ranking logic close to your data model.",
+          "boundary": "Advanced relevance, typo tolerance or specialist search scale can justify a dedicated engine. Evaluate against actual queries and user expectations.",
+          "next": "Build representative search cases and inspect query plans; avoid claiming that an unindexed text scan will scale.",
+          "sources": [
+            [
+              "PostgreSQL text search",
+              "https://www.postgresql.org/docs/current/textsearch-intro.html"
+            ]
+          ]
+        },
+        {
+          "id": "pagination",
+          "job": "Filtering and pagination",
+          "tool": "Flop",
+          "stage": "When needed",
+          "summary": "Validated filter, sort and page parameters for Ecto queries.",
+          "why": "Use Flop when product lists need reusable sorting, filtering and pagination. Keep the allowed fields explicit and restrict the base query to authorized records first.",
+          "boundary": "For one simple bounded list, an explicit Ecto query may be enough. Pagination does not replace tenant or ownership checks.",
+          "next": "Use cursor pagination when the list and ordering warrant it; add Flop Phoenix only for the corresponding UI helpers.",
+          "sources": [
+            [
+              "Flop documentation",
+              "https://hexdocs.pm/flop/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "cache",
+          "job": "Local read caching",
+          "tool": "ETS",
+          "stage": "After measuring",
+          "summary": "Use the runtime’s in-memory tables for disposable cached data.",
+          "why": "First measure and improve database queries. When a local cache earns its keep, ETS provides concurrent in-memory storage without another service.",
+          "boundary": "ETS is node-local, loses data when its owner dies, and does not supply an automatic TTL or invalidation policy. It is never the source of truth.",
+          "next": "Define table ownership, expiry and invalidation. Shared durable state requires a different design.",
+          "sources": [
+            [
+              "ETS documentation",
+              "https://www.erlang.org/doc/apps/stdlib/ets.html"
+            ]
+          ]
+        },
+        {
+          "id": "api",
+          "job": "JSON APIs",
+          "tool": "Phoenix controllers",
+          "stage": "When needed",
+          "summary": "Expose your existing contexts through explicit HTTP endpoints.",
+          "why": "Use Phoenix controllers and JSON rendering when a mobile client, partner or external integration needs an API. Share the business API with your web interface.",
+          "boundary": "Do not build an API simply to connect LiveView to its own server. Add GraphQL only when clients need that query model; Absinthe is the established Elixir option.",
+          "next": "Define authentication, authorization, error shapes, pagination and versioning as part of the API contract.",
+          "sources": [
+            [
+              "Phoenix JSON and APIs",
+              "https://hexdocs.pm/phoenix/json_and_apis.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "ship",
+      "title": "Testing and deployment",
+      "description": "Fast feedback, observable behavior and a repeatable deployment artifact.",
+      "items": [
+        {
+          "id": "test",
+          "job": "Application tests",
+          "tool": "ExUnit + LiveViewTest",
+          "stage": "Start here",
+          "summary": "Test business behavior, persistence and server-driven interaction.",
+          "why": "Use ExUnit and Phoenix’s generated test setup. Test contexts with the database sandbox and interactive screens with Phoenix.LiveViewTest.",
+          "boundary": "Server-side LiveView tests do not execute browser JavaScript or prove the final visual layout. Avoid asserting incidental markup when behavior is the contract.",
+          "next": "Prioritize permission boundaries, data invariants, job behavior and core user journeys.",
+          "sources": [
+            [
+              "ExUnit",
+              "https://hexdocs.pm/ex_unit/ExUnit.html"
+            ],
+            [
+              "LiveViewTest",
+              "https://hexdocs.pm/phoenix_live_view/Phoenix.LiveViewTest.html"
+            ]
+          ]
+        },
+        {
+          "id": "browser",
+          "job": "Browser integration tests",
+          "tool": "PhoenixTest.Playwright",
+          "stage": "When needed",
+          "summary": "Exercise the small set of flows that need a real browser.",
+          "why": "Use the Playwright-backed PhoenixTest driver for JavaScript hooks, browser navigation and integrations that server-side tests cannot cover.",
+          "boundary": "This adds browser tooling and setup cost. Keep most application tests in ExUnit; this is an editorial extension, not a Phoenix-generated default.",
+          "next": "Cover representative critical flows and keep browser tests focused on observable behavior.",
+          "sources": [
+            [
+              "PhoenixTest.Playwright",
+              "https://hexdocs.pm/phoenix_test_playwright/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "observability",
+          "job": "Instrumentation",
+          "tool": "Telemetry + Logger",
+          "stage": "Start here",
+          "summary": "Expose timings, failures and structured operational events.",
+          "why": "Use Telemetry events and Logger as the instrumentation foundation. Track request latency, database time, job failures and the product operations that matter.",
+          "boundary": "Instrumentation is not a hosted monitoring backend. Choose collection, storage and alerting separately; restrict any production LiveDashboard access.",
+          "next": "Make logs useful without exposing secrets. Establish alerts and retention before calling the production system operationally complete.",
+          "sources": [
+            [
+              "Telemetry",
+              "https://hexdocs.pm/telemetry/readme.html"
+            ],
+            [
+              "Logger",
+              "https://hexdocs.pm/logger/Logger.html"
+            ]
+          ]
+        },
+        {
+          "id": "deployment",
+          "job": "Deployment artifact",
+          "tool": "Mix releases",
+          "stage": "When shipping",
+          "summary": "Package the application and runtime in a repeatable release.",
+          "why": "Use Mix releases with runtime configuration. A container is a practical transport when the chosen host supports it; Phoenix documents the release and Dockerfile path.",
+          "boundary": "A release is not a hosting platform. Database backups, migrations, TLS, monitoring and rollback remain production responsibilities.",
+          "next": "Choose a host that fits the team. Rehearse migrations and restoration, and keep secrets out of the build artifact.",
+          "sources": [
+            [
+              "Phoenix releases",
+              "https://hexdocs.pm/phoenix/releases.html"
+            ]
+          ]
+        }
+      ]
+    }
+  ]
+}

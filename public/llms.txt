@@ -1,0 +1,15 @@
+# elixir.menu
+
+> An independent guide to Elixir application paths, optional libraries and a Phoenix-specific web stack. Reviewed 2026-10-06. Choose tools by application requirements; preserve existing project decisions.
+
+## References
+- [Choose an application path](./app-guide.md): CLI, library, service, web, data, device and media starting points.
+- [Structured application paths](./app-guide.json): The same paths and agent instructions as JSON.
+- [Optional tools](./optional.md): Libraries by product requirement, with use cases and integration boundaries.
+- [Structured optional tools](./optional.json): The same optional menu as JSON.
+- [Complete stack brief](./stack.md): Recommendations, boundaries, next steps and primary documentation.
+- [Phoenix setup instructions](./setup.md): Environment checks, generation, local database, accounts and verification for a new web app.
+- [Structured stack](./stack.json): The same recommendation data as JSON.
+- [Reading website](./): The human-readable guide.
+
+Existing project decisions and installed-version documentation take precedence.

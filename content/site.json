@@ -1,0 +1,11 @@
+{
+  "name": "elixir.menu",
+  "origin": "https://elixir.menu",
+  "title": "elixir.menu — Tools for your Elixir app",
+  "description": "Recommended tools for Elixir applications. Start with your application type, explore a Phoenix and LiveView web stack, and choose libraries by feature.",
+  "shareAlt": "elixir.menu — Tools for your Elixir app. An Optimum Tech project.",
+  "routes": [
+    "/"
+  ],
+  "plausibleScriptUrl": "https://plausible.io/js/pa-cHXdG0FMPtpNazwgltQKd.js"
+}

@@ -1,0 +1,66 @@
+{
+  "title": "Create a Phoenix app",
+  "reviewed": "2026-10-06",
+  "status": "Verified 6 October 2026 on macOS: Phoenix 1.8.15, LiveView 1.2.12, Elixir 1.20.4 / OTP 29.1.1 and PostgreSQL 18.3. Setup, auth migrations, formatting, compilation, 112 generated tests and four HTTP routes passed. Browser flows and production deployment remain untested.",
+  "scope": "A new Phoenix web application using LiveView and PostgreSQL. Preserve the choices and workflow of an existing application.",
+  "steps": [
+    {
+      "title": "Check the machine and the destination",
+      "body": "Read the project README and runtime configuration if they exist. Confirm the operating system, intended app name and destination. Check the tools below; a missing command identifies a prerequisite to install. Do not generate into a directory containing unrelated work.",
+      "code": "elixir --version\nmix --version\nmix phx.new --version\npsql --version",
+      "check": "Record the detected versions and missing tools. A PostgreSQL client version does not prove that a database server is running or accessible."
+    },
+    {
+      "title": "Install missing prerequisites",
+      "body": "Use the official Elixir instructions for the detected operating system and a compatible Erlang/OTP version. Reuse the machine’s existing runtime manager. Install and start PostgreSQL using its operating-system-specific instructions. Linux development also needs inotify-tools for live reload. After Elixir is working, install missing Mix tooling and the Phoenix generator with the commands below. Respect any existing version pins; these unversioned commands are for a fresh setup.",
+      "code": "mix local.hex\nmix local.rebar\nmix archive.install hex phx_new",
+      "check": "Record the selected versions in the project’s runtime configuration. Verify the application can connect to PostgreSQL using the intended local credentials before creating databases."
+    },
+    {
+      "title": "Generate the application",
+      "body": "Replace my_app with the agreed application name. Keep Phoenix’s LiveView, mailer, asset and agent-guidance defaults. Respect the project’s established documentation conventions.",
+      "code": "mix phx.new my_app --database postgres\ncd my_app",
+      "check": "Configure the new application’s local database connection before running mix setup. Keep private credentials out of source control. Accept dependency installation when the generator prompts, or let mix setup fetch them."
+    },
+    {
+      "title": "Set up the database and assets",
+      "body": "Run this from the generated application directory, after configuring PostgreSQL. The generated setup task fetches dependencies, prepares the database and builds the development assets. Read its definition in mix.exs before using it in an existing application.",
+      "code": "mix setup",
+      "check": "Setup must finish successfully. If a step fails, fix the reported prerequisite and resume from that step; do not regenerate over the application."
+    },
+    {
+      "title": "Add accounts if the product needs them",
+      "body": "For first-party user accounts, generate Phoenix authentication with the LiveView option. Skip this step for an application without accounts. Follow any additional instructions printed by the generator.",
+      "code": "mix phx.gen.auth Accounts User users --live\nmix deps.get\nmix ecto.migrate",
+      "check": "Review the generated account flows and authorization boundaries. Configure email delivery before relying on production magic links."
+    },
+    {
+      "title": "Verify and hand off",
+      "body": "Format the generated code and any local configuration changes, then run the checks. Start the development server using the project’s normal process. Open the printed URL and verify the page loads. If accounts were generated, exercise registration and sign-in with development email.",
+      "code": "mix format\nmix format --check-formatted\nmix compile --warnings-as-errors\nmix test\nmix phx.server",
+      "check": "Report exact versions, the app location, startup URL, checks that passed and anything unverified. Keep README.md and mix.lock current. Do not describe the setup as production-ready or benchmarked."
+    }
+  ],
+  "sources": [
+    [
+      "Phoenix installation",
+      "https://hexdocs.pm/phoenix/installation.html"
+    ],
+    [
+      "Elixir installation",
+      "https://elixir-lang.org/install/"
+    ],
+    [
+      "PostgreSQL downloads",
+      "https://www.postgresql.org/download/"
+    ],
+    [
+      "Phoenix generator",
+      "https://hexdocs.pm/phoenix/Mix.Tasks.Phx.New.html"
+    ],
+    [
+      "Phoenix authentication generator",
+      "https://hexdocs.pm/phoenix/mix_phx_gen_auth.html"
+    ]
+  ]
+}

@@ -1,0 +1,41 @@
+---
+import generated from '../../.generated/index.html?raw';
+import site from '../../content/site.json';
+const body = generated.split('<body>')[1].split('</body>')[0];
+const preview = process.env.SITE_MODE === 'preview';
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content={preview ? 'noindex,nofollow' : 'index,follow'} />
+    <meta name="description" content={site.description} />
+    <meta name="theme-color" content="#3450c5" />
+    <title>{site.title}</title>
+    {!preview && <link rel="canonical" href={`${site.origin}/`} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.name} />
+    <meta property="og:title" content={site.title} />
+    <meta property="og:description" content={site.description} />
+    {!preview && <meta property="og:url" content={`${site.origin}/`} />}
+    <meta property="og:image" content={`${site.origin}/brand/share.png`} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={site.shareAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={site.title} />
+    <meta name="twitter:description" content={site.description} />
+    <meta name="twitter:image" content={`${site.origin}/brand/share.png`} />
+    <meta name="twitter:image:alt" content={site.shareAlt} />
+    <link rel="icon" type="image/svg+xml" href="/brand/index-favicon.svg" />
+    <link rel="icon" sizes="any" href="/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/apple-touch-icon.png" />
+    <link rel="stylesheet" href="/reference.css" />
+    <link rel="stylesheet" href="/app-types.css" />
+    <link rel="stylesheet" href="/menu.css" />
+    <script is:inline src="/reference.js" defer></script>
+    {!preview && site.plausibleScriptUrl && <script is:inline src="/analytics.js" data-origin={site.origin} data-script={site.plausibleScriptUrl} defer></script>}
+  </head>
+  <body><Fragment set:html={body} /></body>
+</html>
