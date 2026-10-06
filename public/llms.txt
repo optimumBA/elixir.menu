@@ -3,6 +3,8 @@
 > An independent guide to Elixir application paths, optional libraries and a Phoenix-specific web stack. Reviewed 2026-10-06. Choose tools by application requirements; preserve existing project decisions.
 
 ## References
+- [OTP, concurrency and performance](./runtime.md): Built-in state, tasks, supervision, shared memory and pipeline choices.
+- [Structured runtime choices](./runtime.json): The same runtime guide with pipeline recommendations as JSON.
 - [Choose an application path](./app-guide.md): CLI, library, service, web, data, device and media starting points.
 - [Structured application paths](./app-guide.json): The same paths and agent instructions as JSON.
 - [Optional tools](./optional.md): Libraries by product requirement, with use cases and integration boundaries.

@@ -42,7 +42,7 @@ def render_app_types(stack):
     for n, step in enumerate(data['agent_steps'], 1):
         steps.append(f'<article class="setup-step"><span class="step-number">{n:02}</span><div><h3>{e(step["title"])}</h3><p>{e(step["body"])}</p></div></article>')
         md.extend([f'### {n}. {step["title"]}', '', step['body'], ''])
-    md.extend(['## Related references', '', '- [Optional libraries](optional.md)', '- [Phoenix-specific setup](setup.md)', '- [Phoenix application stack](stack.md)', ''])
+    md.extend(['## Related references', '', '- [OTP, concurrency and performance](runtime.md)', '- [Optional libraries](optional.md)', '- [Phoenix-specific setup](setup.md)', '- [Phoenix application stack](stack.md)', ''])
     page = (ROOT / 'content/app-types.html').read_text()
     for token, value in {'PICKER': ''.join(picker), 'PATHS': ''.join(paths), 'SHARED_CHECKS': render_shared_checks(data), 'DECISIONS': decisions, 'OPTIONAL': optional_html, 'OPTIONAL_COUNT': str(count), 'AGENT_GUIDANCE': render_agent_guidance(data), 'AGENT_STEPS': ''.join(steps), 'STATUS': e(data['status'])}.items():
         page = page.replace('{{' + token + '}}', value)

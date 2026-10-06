@@ -1,0 +1,344 @@
+{
+  "title": "OTP, concurrency and performance",
+  "reviewed": "2026-10-06",
+  "intro": "Start with functions. Add processes for state ownership, concurrency or lifecycle. Choose shared storage by its read/write pattern; measure before changing the architecture.",
+  "status": "Built-in Elixir and Erlang tools need no extra package. Follow the installed Elixir/OTP documentation; node-local memory and supervision do not provide durable storage.",
+  "groups": [
+    {
+      "id": "runtime-work",
+      "title": "Computation and process state",
+      "items": [
+        {
+          "id": "runtime-functions",
+          "job": "Ordinary computation",
+          "tool": "Functions + Enum",
+          "when": "The work is business logic or a transformation that needs no independent lifecycle.",
+          "boundary": "Keep it in functions. Adding a process adds messaging and coordination costs; it does not make a function faster.",
+          "sources": [
+            [
+              "Functions + Enum documentation",
+              "https://hexdocs.pm/elixir/Enum.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-stream",
+          "job": "Lazy processing",
+          "tool": "Stream + File.stream!",
+          "when": "A file or collection should be processed incrementally, without building every intermediate result in memory.",
+          "boundary": "Streams are lazy: enumerate them to run the work. They are not parallel; collecting all results can still exhaust memory.",
+          "sources": [
+            [
+              "Stream + File.stream! documentation",
+              "https://hexdocs.pm/elixir/Stream.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-task",
+          "job": "One concurrent operation",
+          "tool": "Task",
+          "when": "Short-lived work can run alongside its caller, such as fetching independent inputs.",
+          "boundary": "Task.async links failures to the caller. Await the result and define timeout/cleanup behavior. Tasks do not survive node restarts as durable jobs.",
+          "sources": [
+            [
+              "Task documentation",
+              "https://hexdocs.pm/elixir/Task.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-task-supervisor",
+          "job": "Supervised concurrent work",
+          "tool": "Task.Supervisor",
+          "when": "Tasks need an application-owned supervisor or must fail independently of the requesting process.",
+          "boundary": "async still links to the caller; choose async_nolink when isolation is required and handle results/exits. max_children rejects excess starts; it is not a waiting queue or a rate limiter.",
+          "sources": [
+            [
+              "Task.Supervisor documentation",
+              "https://hexdocs.pm/elixir/Task.Supervisor.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-async-stream",
+          "job": "Bounded parallel batches",
+          "tool": "Task.async_stream",
+          "when": "Independent items can be processed concurrently with a bounded number of tasks.",
+          "boundary": "Enumerate the stream; set concurrency and timeout policy. ordered: false avoids buffering for input order when order is unnecessary. Task.Supervisor.async_stream_nolink adds supervised, unlinked task execution.",
+          "sources": [
+            [
+              "Task.async_stream documentation",
+              "https://hexdocs.pm/elixir/Task.html#async_stream/3"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-agent",
+          "job": "Simple shared process state",
+          "tool": "Agent",
+          "when": "One process needs to hold a small value accessed through get/update functions.",
+          "boundary": "This is Elixir Agent, not an AI agent. Operations run serially inside its process. Choose GenServer for messages, timers or a richer lifecycle; ETS for concurrent table access.",
+          "sources": [
+            [
+              "Agent documentation",
+              "https://hexdocs.pm/elixir/Agent.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-genserver",
+          "job": "State and coordination",
+          "tool": "GenServer",
+          "when": "A long-lived process owns state or coordinates a resource, for example a connection or session.",
+          "boundary": "Callbacks execute serially. Keep slow work out of callbacks when responsiveness matters; call timeouts do not cancel server work. In-memory state needs a separate persistence strategy.",
+          "sources": [
+            [
+              "GenServer documentation",
+              "https://hexdocs.pm/elixir/GenServer.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-statem",
+          "job": "Explicit runtime transitions",
+          "tool": ":gen_statem",
+          "when": "A protocol or connection has distinct states, state-specific events and transition/timeout rules.",
+          "boundary": "Use functions or a data model for ordinary business statuses. The behaviour models a running process; supervision does not make its state durable.",
+          "sources": [
+            [
+              ":gen_statem documentation",
+              "https://www.erlang.org/doc/apps/stdlib/gen_statem.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime-lifecycle",
+      "title": "Lifecycle, naming and coordination",
+      "items": [
+        {
+          "id": "runtime-supervisor",
+          "job": "Application lifecycle",
+          "tool": "Application + Supervisor",
+          "when": "Long-running children must start in order and recover according to their dependencies.",
+          "boundary": "Choose restart and shutdown policies deliberately. Restarts do not restore lost state, and terminate callbacks are not a durability guarantee. Slow child initialization delays later children.",
+          "sources": [
+            [
+              "Application + Supervisor documentation",
+              "https://hexdocs.pm/elixir/Supervisor.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-dynamic-supervisor",
+          "job": "Workers created at runtime",
+          "tool": "DynamicSupervisor",
+          "when": "The application starts and stops workers as demand changes, such as one worker per active room.",
+          "boundary": "Use Registry for discovery. A restarted supervisor does not remember the former dynamic child set; reconcile it from an authoritative source when required.",
+          "sources": [
+            [
+              "DynamicSupervisor documentation",
+              "https://hexdocs.pm/elixir/DynamicSupervisor.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-registry",
+          "job": "Find local processes",
+          "tool": "Registry",
+          "when": "Processes need names based on runtime keys, such as tenant/session IDs, or local duplicate-key dispatch.",
+          "boundary": "Use :via tuples rather than creating atoms from user input. Registry is node-local; it is neither cluster discovery nor durable storage.",
+          "sources": [
+            [
+              "Registry documentation",
+              "https://hexdocs.pm/elixir/Registry.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-partition",
+          "job": "Reduce supervisor contention",
+          "tool": "PartitionSupervisor",
+          "when": "Measurements show one process, such as a DynamicSupervisor or Task.Supervisor, bottlenecking concurrent starts.",
+          "boundary": "Route work across partitioned children. This reduces contention in that layer; it does not parallelize a single worker or distribute work across nodes.",
+          "sources": [
+            [
+              "PartitionSupervisor documentation",
+              "https://hexdocs.pm/elixir/PartitionSupervisor.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-process",
+          "job": "Observe failure and schedule messages",
+          "tool": "Process monitors + timers",
+          "when": "A process must observe another process exiting or receive a delayed message.",
+          "boundary": "Monitors report DOWN without coupling failures; links couple lifecycles. Process.send_after schedules a message, not a durable job. Account for stale timer messages and mailbox growth.",
+          "sources": [
+            [
+              "Process monitors + timers documentation",
+              "https://hexdocs.pm/elixir/Process.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-inspection",
+          "job": "Inspect a running process",
+          "tool": ":sys + Process.info",
+          "when": "A running server has unexpected state, memory growth or a growing mailbox.",
+          "boundary": "Use :sys for OTP process state and bounded debugging; Process.info reports process memory and queue length. Inspecting full state can expose sensitive values and allocate large results. These tools diagnose behavior; they do not repair it.",
+          "sources": [
+            [
+              "OTP sys",
+              "https://www.erlang.org/doc/apps/stdlib/sys.html"
+            ],
+            [
+              "Process.info",
+              "https://hexdocs.pm/elixir/Process.html#info/2"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "runtime-storage",
+      "title": "Shared data and hot paths",
+      "items": [
+        {
+          "id": "runtime-ets",
+          "job": "Mutable shared tables",
+          "tool": ":ets",
+          "when": "Many processes need concurrent lookups or updates to node-local in-memory data.",
+          "boundary": "Choose table type, ownership and access rights. Tune read/write concurrency against measurements. The table normally dies with its owner; TTL, invalidation and durability are separate.",
+          "sources": [
+            [
+              ":ets documentation",
+              "https://www.erlang.org/doc/apps/stdlib/ets.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-persistent-term",
+          "job": "Read-mostly shared values",
+          "tool": ":persistent_term",
+          "when": "Many processes repeatedly read a value that changes rarely, such as a static lookup or a stable resource reference. A stable :counters reference can be stored once while the counter array itself is updated.",
+          "boundary": "Reads avoid locks and copying the value onto the caller heap. Writes copy the key table; replacing/deleting complex terms triggers a node-wide GC scan. Avoid request-time updates and expiring caches. Persistent means VM lifetime, not disk durability.",
+          "sources": [
+            [
+              ":persistent_term documentation",
+              "https://www.erlang.org/doc/apps/erts/persistent_term.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-counters",
+          "job": "Frequent shared increments",
+          "tool": ":counters",
+          "when": "Many processes update numeric metrics without routing each increment through one server.",
+          "boundary": "write_concurrency favors add/sub throughput with weaker read consistency. Choose atomics mode when those semantics do not fit. Fixed-width integers wrap; this is node-local memory, not an accounting ledger.",
+          "sources": [
+            [
+              ":counters documentation",
+              "https://www.erlang.org/doc/apps/erts/counters.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-atomics",
+          "job": "Atomic numeric coordination",
+          "tool": ":atomics",
+          "when": "An integer operation needs an atomic result or compare-and-exchange, such as claiming a numeric slot.",
+          "boundary": "Individual operations are atomic and mutually ordered. A sequence of operations is not a transaction. Integers wrap on overflow, and these values are not cluster-wide.",
+          "sources": [
+            [
+              ":atomics documentation",
+              "https://www.erlang.org/doc/apps/erts/atomics.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-queue",
+          "job": "FIFO data structure",
+          "tool": ":queue",
+          "when": "A process holds a FIFO buffer and repeated list appends would be costly.",
+          "boundary": "A queue is a data structure, not a worker, backpressure mechanism or persistent job system. Bound its size and define overload behavior.",
+          "sources": [
+            [
+              ":queue documentation",
+              "https://www.erlang.org/doc/apps/stdlib/queue.html"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-iodata",
+          "job": "Build output from fragments",
+          "tool": "iodata",
+          "when": "Output combines many byte fragments and its destination accepts iodata.",
+          "boundary": "Keep binaries and byte lists nested until a binary is required. Avoid repeated copying; benchmark the actual construction because BEAM binary appends can also be optimized.",
+          "sources": [
+            [
+              "iodata documentation",
+              "https://hexdocs.pm/elixir/IO.html#module-io-data"
+            ]
+          ]
+        },
+        {
+          "id": "runtime-binary",
+          "job": "Control retained binary memory",
+          "tool": ":binary",
+          "when": "Small slices of large payloads live in process state or another long-lived store.",
+          "boundary": "Inspect referenced_byte_size. Copy selected retained slices when they pin a much larger binary; copying every binary adds allocation and work.",
+          "sources": [
+            [
+              ":binary documentation",
+              "https://www.erlang.org/doc/apps/stdlib/binary.html"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "pipeline_ids": [
+    "genstage",
+    "flow",
+    "ingestion"
+  ],
+  "notes": [
+    {
+      "title": "Choose durability separately",
+      "body": "Use Task for disposable work and Oban for application jobs that need persistence and retries. GenStage and Broadway regulate ingestion; source acknowledgements and retry-safe handlers determine delivery behavior.",
+      "sources": [
+        [
+          "Oban",
+          "https://hexdocs.pm/oban/Oban.html"
+        ]
+      ]
+    },
+    {
+      "title": "Measure the limiting resource",
+      "body": "Track latency, throughput, memory, mailbox growth, database queries and pool waits on representative traffic. Extra tasks can overload a database or an upstream API. Use Benchee for code comparisons and profilers to find where work accumulates.",
+      "sources": [
+        [
+          "Benchee",
+          "https://hexdocs.pm/benchee/readme.html"
+        ],
+        [
+          "OTP profiling",
+          "https://www.erlang.org/doc/apps/tools/tprof.html"
+        ]
+      ]
+    },
+    {
+      "title": "Stream database exports deliberately",
+      "body": "Use Ecto.Repo.stream for incremental row processing when the adapter supports it. SQL adapters require enumeration inside a transaction. Long streams occupy a database connection; batching and collecting results can change memory use.",
+      "sources": [
+        [
+          "Ecto.Repo.stream",
+          "https://hexdocs.pm/ecto/Ecto.Repo.html#c:stream/2"
+        ]
+      ]
+    }
+  ]
+}

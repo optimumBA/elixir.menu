@@ -38,7 +38,7 @@ render_app_types(data)
 render_menu(data)
 public=ROOT/'public'
 public.mkdir(exist_ok=True)
-for filename in ['stack.md','stack.json','app-guide.md','app-guide.json','optional.md','optional.json','setup.md']:
+for filename in ['stack.md','stack.json','app-guide.md','app-guide.json','optional.md','optional.json','runtime.md','runtime.json','setup.md']:
     shutil.copy2(output/filename,public/filename)
 for filename in ['menu.css','menu.js','reference.css','reference.js','app-types.css']:
     shutil.copy2(ROOT/'assets'/filename,public/filename)

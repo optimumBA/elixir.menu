@@ -384,6 +384,124 @@
       ]
     },
     {
+      "id": "optional-performance",
+      "title": "Performance and scaling",
+      "items": [
+        {
+          "id": "genstage",
+          "job": "Custom demand-driven pipelines",
+          "tool": "GenStage",
+          "when": "Producers and consumers need a custom event pipeline with demand-driven backpressure.",
+          "use": "Model stages around runtime concurrency and data transfer; keep business steps in functions.",
+          "boundary": "You own buffering, subscriptions and failure behavior. Use Task.async_stream for simpler bounded parallel work, or Broadway for its ingestion features.",
+          "sources": [
+            [
+              "GenStage",
+              "https://hexdocs.pm/gen_stage/GenStage.html"
+            ]
+          ]
+        },
+        {
+          "id": "flow",
+          "job": "Parallel dataset transformations",
+          "tool": "Flow",
+          "when": "A large enumerable needs parallel mapping, partitioned grouping, aggregation or windows.",
+          "use": "Build a Flow pipeline and choose partition keys, stages and windows for the workload.",
+          "boundary": "Coordination has overhead; small inputs can favor Enum or Task. Partitioning affects grouping and order; bound accumulating state.",
+          "sources": [
+            [
+              "Flow",
+              "https://hexdocs.pm/flow/Flow.html"
+            ]
+          ]
+        },
+        {
+          "id": "benchmarking",
+          "job": "Compare code performance",
+          "tool": "Benchee",
+          "when": "A measured hot path has alternative implementations to compare.",
+          "use": "Benchmark representative inputs with warmup, runtime, memory and reduction measurements.",
+          "boundary": "Microbenchmarks do not establish application throughput or production latency. Check correctness and end-to-end behavior separately.",
+          "sources": [
+            [
+              "Benchee",
+              "https://hexdocs.pm/benchee/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "profiling",
+          "job": "Locate runtime bottlenecks",
+          "tool": "Mix + OTP profilers",
+          "when": "The application is slow and you need to locate expensive calls or repeated work.",
+          "use": "Use the supported mix profile task or OTP profiler for the question; combine findings with the existing Telemetry events.",
+          "boundary": "Check installed runtime support for tprof, eprof and fprof. Tracing can change timing and add overhead; profile a representative bounded workload.",
+          "sources": [
+            [
+              "Mix + OTP profilers",
+              "https://hexdocs.pm/mix/Mix.Tasks.Profile.Tprof.html"
+            ]
+          ]
+        },
+        {
+          "id": "cache-management",
+          "job": "Managed in-memory caching",
+          "tool": "Cachex",
+          "when": "A node-local cache needs expiration, eviction or fallback loading beyond a small ETS implementation.",
+          "use": "Configure cache limits, expiration and loading behavior around the data lifecycle.",
+          "boundary": "Define invalidation and stale-data policy. A local cache is not a durable source of truth or a cluster-wide consistency guarantee.",
+          "sources": [
+            [
+              "Cachex",
+              "https://hexdocs.pm/cachex/Cachex.html"
+            ]
+          ]
+        },
+        {
+          "id": "native-rust",
+          "job": "Native computation and Rust integration",
+          "tool": "Rustler",
+          "when": "Profiling identifies CPU-heavy work suited to native code, or the product must call an existing Rust library.",
+          "use": "Expose a narrow NIF interface and select normal versus dirty scheduling appropriate to the work.",
+          "boundary": "Native faults can crash the VM. Validate target builds, scheduler impact and boundary-copying costs; consider a separate OS process when fault isolation is required.",
+          "sources": [
+            [
+              "Rustler",
+              "https://hexdocs.pm/rustler/readme.html"
+            ]
+          ]
+        },
+        {
+          "id": "numerical-compiler",
+          "job": "Compiled tensor computation",
+          "tool": "EXLA + Nx",
+          "when": "Nx numerical work needs a compiled backend on supported CPU or accelerator hardware.",
+          "use": "Use EXLA as the Nx compiler/backend and select the supported target, precision and memory settings.",
+          "boundary": "Compilation, data transfer and native dependencies have costs. Verify hardware/toolchain support and measure representative workloads; it is not a general accelerator for arbitrary Elixir functions.",
+          "sources": [
+            [
+              "EXLA + Nx",
+              "https://hexdocs.pm/exla/EXLA.html"
+            ]
+          ]
+        },
+        {
+          "id": "elastic-compute",
+          "job": "Elastic remote execution",
+          "tool": "FLAME",
+          "when": "Bursty expensive work should run on additional ephemeral nodes, such as media processing or model inference.",
+          "use": "Configure a bounded runner pool and an appropriate backend. Start only required application children and size runner database pools deliberately.",
+          "boundary": "Boot latency, network transfer and capacity costs matter. FLAME supplies compute execution, not a durable job queue; pair it with Oban when jobs must persist.",
+          "sources": [
+            [
+              "FLAME",
+              "https://hexdocs.pm/flame/FLAME.html"
+            ]
+          ]
+        }
+      ]
+    },
+    {
       "id": "optional-development",
       "title": "Development tools",
       "items": [

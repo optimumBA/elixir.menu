@@ -191,7 +191,7 @@
     },
     {
       "title": "Select libraries by requirement",
-      "body": "Read optional.md and add only tools whose use cases match the product. Check versions, native dependencies and deployment constraints. Record the reasons and setup in the project’s maintained documentation. Preserve its existing agent-guidance conventions."
+      "body": "Read runtime.md for built-in state, concurrency and storage choices. Read optional.md and add only tools whose use cases match the product. Check versions, native dependencies and deployment constraints. Record the reasons and setup in the project’s maintained documentation. Preserve its existing agent-guidance conventions."
     },
     {
       "title": "Verify the actual application",

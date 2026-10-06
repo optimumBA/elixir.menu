@@ -8,6 +8,7 @@ def render_menu(stack):
     from build_optional import render_optional
     from build_app_types import render_shared_checks, render_agent_guidance
     from build_reference import LABELS
+    from build_runtime import render_runtime
     dist=ROOT/'.generated'
     reference=(dist/'variants/reference.html').read_text()
     app=(dist/'variants/app-types.html').read_text()
@@ -25,10 +26,11 @@ def render_menu(stack):
     setup=reference.split('<article class="setup-step">',1)[1].split('<div class="setup-sources">',1)[0]
     setup='<article class="setup-step">'+setup
     optional,count=render_optional()
-    optional=optional.replace('OPTIONAL TOOLS / '+str(count)+' USE CASES','03 / OPTIONAL TOOLS').replace('What are you building?','Libraries for the features you need.')
+    optional=optional.replace('OPTIONAL TOOLS / '+str(count)+' USE CASES','04 / OPTIONAL TOOLS').replace('What are you building?','Libraries for the features you need.')
     nav=''.join(f'<a href="#{g["id"]}">{e(LABELS[g["id"]])}</a>' for g in stack['groups'])
     values={'PATHS':paths,'SHARED_CHECKS':render_shared_checks(data),'STACK':stack_html,'STACK_COUNT':str(sum(len(g['items']) for g in stack['groups'])),'GROUP_NAV':nav,'OPTIONAL':optional,'AGENT_GUIDANCE':render_agent_guidance(data),'SETUP_STATUS':e(json.loads((ROOT/'content/setup.json').read_text())['status']),'AGENT_STEPS':steps,'SETUP':setup}
     page=(ROOT/'content/menu.html').read_text()
+    values['RUNTIME'] = render_runtime()
     for k,v in values.items():page=page.replace('{{'+k+'}}',v)
     (dist/'index.html').write_text(page)
     shutil.copytree(ROOT/'assets/brand',dist/'brand',dirs_exist_ok=True)
