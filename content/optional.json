@@ -84,6 +84,20 @@
           ]
         },
         {
+          "id": "markdown",
+          "job": "Markdown parsing and rendering",
+          "tool": "MDEx",
+          "when": "The application needs CommonMark parsing, rendered Markdown content or transformations over a Markdown document tree.",
+          "use": "Use MDEx to parse and transform a document or render HTML. Choose extensions and syntax highlighting deliberately; reserve HEEx components and expressions for trusted application-owned content.",
+          "boundary": "Treat user-authored Markdown as untrusted input: configure and verify HTML sanitization, link handling and size limits. Never evaluate its HEEx expressions. MDEx uses native Rust code; verify precompiled artifact support or a Rust build toolchain for the deployment target.",
+          "sources": [
+            [
+              "MDEx",
+              "https://github.com/leandrocp/mdex"
+            ]
+          ]
+        },
+        {
           "id": "pdf-generation",
           "job": "PDF generation",
           "tool": "ChromicPDF",
