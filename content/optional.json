@@ -221,31 +221,13 @@
           "id": "llm-client",
           "job": "Calling language models",
           "tool": "ReqLLM",
-          "when": "The product needs text generation, streamed responses or model tool calls through hosted APIs.",
-          "use": "Use a common Elixir interface to supported model providers and keep provider-specific settings explicit.",
-          "boundary": "Provider capabilities differ. The client does not supply evaluation, permission checks or a reliable autonomous workflow; test the exact model and features used.",
+          "when": "The product needs text generation, streaming, structured outputs, embeddings or model tool calls through supported provider APIs.",
+          "use": "Use a common Elixir interface to supported providers, including schema-constrained output and embedding generation. Keep provider-specific settings explicit; store embeddings separately when retrieval needs persistence.",
+          "boundary": "Provider and model capabilities differ. Start here for direct model calls; add an agent framework only when orchestration needs it. Define application validation, permissions and representative evaluations separately.",
           "sources": [
             [
               "ReqLLM",
               "https://github.com/agentjido/req_llm"
-            ]
-          ]
-        },
-        {
-          "id": "agent-runtime",
-          "job": "Stateful agent workflows",
-          "tool": "Jido 2.x",
-          "when": "The application needs stateful agents that select or coordinate steps, react to signals or run under OTP supervision.",
-          "use": "Model the system with agents, actions, signals and directives, and run long-lived agents through Jido's supervised runtime.",
-          "boundary": "Jido is an application architecture, not an LLM client. Prefer a plain GenServer, an Oban workflow or an explicit function pipeline when the behavior is fixed and simple.",
-          "sources": [
-            [
-              "Jido documentation",
-              "https://hexdocs.pm/jido/readme.html"
-            ],
-            [
-              "Jido ecosystem",
-              "https://jido.run/ecosystem"
             ]
           ]
         },
@@ -264,6 +246,48 @@
             [
               "Jido ecosystem",
               "https://jido.run/ecosystem"
+            ]
+          ]
+        },
+        {
+          "id": "structured-extraction",
+          "job": "Validated structured extraction",
+          "tool": "InstructorLite",
+          "when": "The main requirement is extracting typed fields from text into Ecto schemas, with casting, validation and retries.",
+          "use": "Define an instruction with an Ecto schema and use changeset validation to check the returned fields. Choose this alternative when its Ecto integration fits better than ReqLLM structured output.",
+          "boundary": "It is not an agent runtime and does not provide response streaming. Valid fields can still contain incorrect facts; handle failed validation, retry limits and domain checks explicitly.",
+          "sources": [
+            [
+              "InstructorLite",
+              "https://github.com/martosaur/instructor_lite"
+            ]
+          ]
+        },
+        {
+          "id": "llm-chains",
+          "job": "Conversational chains and tool loops",
+          "tool": "LangChain for Elixir",
+          "when": "The application is organized around message history, model responses and chained tool calls, or already uses the Elixir LangChain abstractions.",
+          "use": "Compose messages, model adapters and tools through LLMChain. Use its callbacks for streaming and inspect tool-call trajectories when evaluating a conversation workflow.",
+          "boundary": "This is an alternative orchestration approach, not an extra layer every ReqLLM or Jido application needs. Bound tool loops, authorize actions and implement persistence and retry behavior for the actual product.",
+          "sources": [
+            [
+              "LangChain for Elixir",
+              "https://github.com/brainlid/langchain"
+            ]
+          ]
+        },
+        {
+          "id": "ash-ai",
+          "job": "AI features for Ash applications",
+          "tool": "Ash AI",
+          "when": "An application already uses Ash resources and needs to expose selected actions as model tools or MCP tools, generate structured outputs or maintain embeddings.",
+          "use": "Add Ash AI to the existing Ash domains and resources. Select the actions to expose and carry the authenticated actor and tenant into their execution; configure model access only for features that require it.",
+          "boundary": "Choose Ash as an architecture first. Ash AI does not justify migrating an ordinary contexts application by itself. Test authorization for every exposed action and verify embedding updates, retrieval quality and model costs.",
+          "sources": [
+            [
+              "Ash AI",
+              "https://github.com/ash-project/ash_ai"
             ]
           ]
         },
@@ -299,7 +323,7 @@
     },
     {
       "id": "optional-data",
-      "title": "Data processing",
+      "title": "Data processing and machine learning",
       "items": [
         {
           "id": "ingestion",
@@ -328,6 +352,40 @@
               "https://hexdocs.pm/explorer/Explorer.html"
             ]
           ]
+        },
+        {
+          "id": "neural-networks",
+          "job": "Building and training neural networks",
+          "tool": "Axon + Nx",
+          "when": "The project needs to define or train a neural network in Elixir rather than only run a supported pretrained model.",
+          "use": "Use Axon to build models and training loops on Nx, with a numerical compiler/backend suited to the target hardware. Use Bumblebee when loading a supported pretrained model meets the requirement.",
+          "boundary": "Check native backend support, hardware, memory and training data. Validate on held-out data and measure deployment behavior; adding Axon does not establish model quality or a performance advantage.",
+          "sources": [
+            [
+              "Axon",
+              "https://github.com/elixir-nx/axon"
+            ]
+          ]
+        }
+      ]
+    },
+    {
+      "id": "optional-development",
+      "title": "Development tools",
+      "items": [
+        {
+          "id": "ai-development",
+          "job": "AI-assisted Phoenix development",
+          "tool": "Tidewave",
+          "when": "A coding agent needs runtime context from a Phoenix application during development.",
+          "use": "Add the Tidewave Phoenix integration as a development-only dependency and plug. Connect your coding agent to inspect logs, evaluate code, query the development database and read installed-version documentation.",
+          "boundary": "This gives the agent access to the running development application. Use a trusted local environment and keep the dependency and endpoint out of production; this is tooling for building the app, not an AI feature for its users.",
+          "sources": [
+            [
+              "Tidewave Phoenix",
+              "https://github.com/tidewave-ai/tidewave_phoenix"
+            ]
+          ]
         }
       ]
     },
@@ -346,6 +404,24 @@
             [
               "What is Ash?",
               "https://hexdocs.pm/ash/what-is-ash.html"
+            ]
+          ]
+        },
+        {
+          "id": "agent-runtime",
+          "job": "Stateful agent workflows",
+          "tool": "Jido 2.x",
+          "when": "The application needs cooperating agents that choose or coordinate steps, share reusable actions and react to routed signals.",
+          "use": "Model the system with agents, actions, signals and directives, and run long-lived agents through Jido's supervised runtime. AI is optional; add Jido.AI only when decisions need a language model.",
+          "boundary": "Prefer a plain GenServer, durable Oban jobs or an explicit function pipeline when behavior is fixed and simple. Supervision and in-memory state alone do not preserve progress across restarts; choose and verify persistence and resume behavior.",
+          "sources": [
+            [
+              "Jido documentation",
+              "https://hexdocs.pm/jido/readme.html"
+            ],
+            [
+              "Jido ecosystem",
+              "https://jido.run/ecosystem"
             ]
           ]
         }

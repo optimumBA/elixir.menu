@@ -106,7 +106,7 @@
       "short": "Notebooks, data transformations and numerical models.",
       "start": "Livebook; Mix for the application",
       "command": null,
-      "explanation": "Use Livebook for interactive exploration, Explorer for tabular data, and Nx for numerical computation. Move reusable work into a Mix application when it needs a maintained API, tests or a service lifecycle.",
+      "explanation": "Use Livebook for interactive exploration, Explorer for tabular data, and Nx for numerical computation. Add Axon when defining or training neural networks is the requirement. Move reusable work into a Mix application when it needs a maintained API, tests or a service lifecycle.",
       "boundary": "Hosted model calls, local inference and training are different requirements. Check native backends, memory and hardware before selecting a deployment environment.",
       "sources": [
         [
@@ -120,6 +120,10 @@
         [
           "Explorer",
           "https://hexdocs.pm/explorer/Explorer.html"
+        ],
+        [
+          "Axon",
+          "https://github.com/elixir-nx/axon"
         ]
       ]
     },
