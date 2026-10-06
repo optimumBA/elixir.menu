@@ -4,7 +4,9 @@
   X-Frame-Options: DENY
   Content-Security-Policy: default-src 'self'; script-src 'self' https://plausible.io; connect-src 'self' https://plausible.io; style-src 'self'; img-src 'self' data:; font-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'none'
 /*.md
-  Content-Type: text/plain; charset=utf-8
+  Content-Type: text/markdown; charset=utf-8
+/
+  Link: <https://elixir.menu/llms.txt>; rel="describedby"; type="text/plain", <https://elixir.menu/sitemap.xml>; rel="sitemap"; type="application/xml"
 /LICENSE
   Content-Type: text/plain; charset=utf-8
 /NOTICE

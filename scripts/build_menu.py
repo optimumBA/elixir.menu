@@ -21,6 +21,8 @@ def render_menu(stack):
     blocks=re.findall(r'<details class="application-path".*?</details>',paths,re.S)
     blocks.sort(key=lambda s: 0 if 'id="web-project"' in s else 1)
     paths=''.join(blocks).replace(' open>','>').replace('/variants/reference.html#','#').replace('href="/variants/reference.html"','href="#stack"')
+    # The published menu nests paths directly beneath an h2 section.
+    paths=paths.replace('<h4>', '<h3 class="path-detail-title">').replace('</h4>', '</h3>')
     data=json.loads((ROOT/'content/app-types.json').read_text())
     steps=''.join(f'<article class="setup-step"><span class="step-number">{n:02}</span><div><h3>{e(s["title"])}</h3><p>{e(s["body"])}</p></div></article>' for n,s in enumerate(data['agent_steps'],1))
     setup=reference.split('<article class="setup-step">',1)[1].split('<div class="setup-sources">',1)[0]

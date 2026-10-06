@@ -29,3 +29,7 @@ The guide is an editorial reference. It is not a framework or installer, and the
 ## License
 
 Original source and editorial content use [Apache 2.0](LICENSE). The bundled Rethink Sans font retains its SIL Open Font License; see [NOTICE](NOTICE). Linked projects keep their own licenses.
+
+## Agent-readable pages
+
+[Generation and verification](docs/agent-readability.md) owns the HTML/Markdown representations and information pages. The build also uses Python 3.

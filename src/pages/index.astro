@@ -1,8 +1,18 @@
 ---
+import SiteInformationLinks from "../components/SiteInformationLinks.astro";
+import AgentMetadata from '../components/AgentMetadata.astro';
 import generated from '../../.generated/index.html?raw';
 import site from '../../content/site.json';
-const body = generated.split('<body>')[1].split('</body>')[0];
+const body = generated.split('<body>')[1].split('<SiteInformationLinks /></body>')[0];
 const preview = process.env.SITE_MODE === 'preview';
+const identity = {
+  '@context': 'https://schema.org',
+  '@type': 'WebPage',
+  name: site.title,
+  description: site.description,
+  url: `${site.origin}/`,
+  publisher: { '@id': 'https://optimum.ba/#organization' },
+};
 ---
 <!doctype html>
 <html lang="en">
@@ -11,6 +21,7 @@ const preview = process.env.SITE_MODE === 'preview';
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <meta name="robots" content={preview ? 'noindex,nofollow' : 'index,follow'} />
     <meta name="description" content={site.description} />
+    {!preview && <script type="application/ld+json" set:html={JSON.stringify(identity).replace(/</g, '\\u003c')} />}
     <meta name="theme-color" content="#3450c5" />
     <title>{site.title}</title>
     {!preview && <link rel="canonical" href={`${site.origin}/`} />}
@@ -36,6 +47,6 @@ const preview = process.env.SITE_MODE === 'preview';
     <link rel="stylesheet" href="/menu.css" />
     <script is:inline src="/reference.js" defer></script>
     {!preview && site.plausibleScriptUrl && <script is:inline src="/analytics.js" data-origin={site.origin} data-script={site.plausibleScriptUrl} defer></script>}
-  </head>
+  <AgentMetadata /></head>
   <body><Fragment set:html={body} /></body>
 </html>

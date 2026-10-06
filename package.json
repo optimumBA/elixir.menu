@@ -4,7 +4,7 @@
   "license": "Apache-2.0",
   "type": "module",
   "scripts": {
-    "build": "node scripts/render_brand.mjs && python3 scripts/build.py && astro build",
+    "build": "node scripts/render_brand.mjs && python3 scripts/build.py && astro build && python3 scripts/build-agent-content.py",
     "dev": "python3 scripts/build.py && astro dev --host 127.0.0.1",
     "preview": "astro preview --host 127.0.0.1",
     "brand": "node scripts/render_brand.mjs"
