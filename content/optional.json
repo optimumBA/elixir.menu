@@ -232,6 +232,42 @@
           ]
         },
         {
+          "id": "agent-runtime",
+          "job": "Stateful agent workflows",
+          "tool": "Jido 2.x",
+          "when": "The application needs stateful agents that select or coordinate steps, react to signals or run under OTP supervision.",
+          "use": "Model the system with agents, actions, signals and directives, and run long-lived agents through Jido's supervised runtime.",
+          "boundary": "Jido is an application architecture, not an LLM client. Prefer a plain GenServer, an Oban workflow or an explicit function pipeline when the behavior is fixed and simple.",
+          "sources": [
+            [
+              "Jido documentation",
+              "https://hexdocs.pm/jido/readme.html"
+            ],
+            [
+              "Jido ecosystem",
+              "https://jido.run/ecosystem"
+            ]
+          ]
+        },
+        {
+          "id": "ai-agents",
+          "job": "Tool-using AI agents",
+          "tool": "Jido.AI 2.x",
+          "when": "A language model must select tools, keep agent state or run a bounded multistep reasoning loop.",
+          "use": "Add Jido.AI to a Jido agent and use ReqLLM for provider access. Define tools as actions, and keep model selection, timeouts and tool policy explicit.",
+          "boundary": "Model output is untrusted and nondeterministic. Restrict tool permissions and side effects, set cost and step limits, require approval for high-risk operations, and test representative tasks.",
+          "sources": [
+            [
+              "Jido.AI documentation",
+              "https://hexdocs.pm/jido_ai/readme.html"
+            ],
+            [
+              "Jido ecosystem",
+              "https://jido.run/ecosystem"
+            ]
+          ]
+        },
+        {
           "id": "vector-search",
           "job": "Vector similarity search",
           "tool": "pgvector",
