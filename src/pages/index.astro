@@ -1,9 +1,8 @@
 ---
-import SiteInformationLinks from "../components/SiteInformationLinks.astro";
 import AgentMetadata from '../components/AgentMetadata.astro';
 import generated from '../../.generated/index.html?raw';
 import site from '../../content/site.json';
-const body = generated.split('<body>')[1].split('<SiteInformationLinks /></body>')[0];
+const body = generated.split('<body>')[1].split('</body>')[0];
 const preview = process.env.SITE_MODE === 'preview';
 const identity = {
   '@context': 'https://schema.org',

@@ -33,6 +33,7 @@ def render_menu(stack):
     values={'PATHS':paths,'SHARED_CHECKS':render_shared_checks(data),'STACK':stack_html,'STACK_COUNT':str(sum(len(g['items']) for g in stack['groups'])),'GROUP_NAV':nav,'OPTIONAL':optional,'AGENT_GUIDANCE':render_agent_guidance(data),'SETUP_STATUS':e(json.loads((ROOT/'content/setup.json').read_text())['status']),'AGENT_STEPS':steps,'SETUP':setup}
     page=(ROOT/'content/menu.html').read_text()
     values['RUNTIME'] = render_runtime()
+    values['FOOTER'] = (ROOT/'content/footer.html').read_text().strip()
     for k,v in values.items():page=page.replace('{{'+k+'}}',v)
     (dist/'index.html').write_text(page)
     shutil.copytree(ROOT/'assets/brand',dist/'brand',dirs_exist_ok=True)
