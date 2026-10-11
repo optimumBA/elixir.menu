@@ -13,9 +13,11 @@ def render_optional():
         md.extend([f'## {group["title"]}', ''])
         rows = []
         for item in group['items']:
+            setup = f'<h4>Set it up</h4><pre><code>{e(item["setup"])}</code></pre><p>{e(item["check"])}</p>' if item.get('setup') else ''
             sources = ''.join(f'<a href="{e(url, quote=True)}">{e(label)}</a>' for label, url in item['sources'])
-            rows.append(f'''<details class="recommendation" id="{e(item['id'])}"><summary><span class="task">{e(item['job'])}</span><strong>{e(item['tool'])}</strong><span class="toggle" aria-hidden="true"></span></summary><div class="recommendation-body"><h4>Use it when</h4><p class="recommendation-summary">{e(item['when'])}</p><div class="explanation"><div><h4>How it fits</h4><p>{e(item['use'])}</p></div><div><h4>What else to account for</h4><p>{e(item['boundary'])}</p></div></div><div class="source-links">{sources}</div></div></details>''')
+            rows.append(f'''<details class="recommendation" id="{e(item['id'])}"><summary><span class="task">{e(item['job'])}</span><strong>{e(item['tool'])}</strong><span class="toggle" aria-hidden="true"></span></summary><div class="recommendation-body"><h4>Use it when</h4><p class="recommendation-summary">{e(item['when'])}</p><div class="explanation"><div><h4>How it fits</h4><p>{e(item['use'])}</p></div><div><h4>What else to account for</h4><p>{e(item['boundary'])}</p></div></div><div class="source-links">{sources}</div>{setup}</div></details>''')
             md.extend([f'### {item["job"]}: {item["tool"]}', '', f'Use it when: {item["when"]}', '', f'How it fits: {item["use"]}', '', f'What else to account for: {item["boundary"]}', '', 'Sources: ' + ' · '.join(f'[{label}]({url})' for label, url in item['sources']), ''])
+            if item.get('setup'): md.extend(['#### Set it up', '', '```elixir', item['setup'], '```', '', item['check'], ''])
         groups.append(f'<section class="category" id="{e(group["id"])}"><h3>{e(group["title"])}</h3><div class="recommendations">{"".join(rows)}</div></section>')
     tracks = ''.join(f'<li><a href="{e(t["url"], quote=True)}">{e(t["tool"])}</a> — {e(t["job"])}.</li>' for t in data['specialist_tracks'])
     md.extend(['## Specialist projects', '', 'These need their own architecture and deployment plan:', ''] + [f'- [{t["tool"]}]({t["url"]}): {t["job"]}.' for t in data['specialist_tracks']] + [''])

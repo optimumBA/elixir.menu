@@ -55,7 +55,7 @@
       },
       {
         "title": "Verify the resulting application",
-        "body": "Run the project’s formatting, compilation and relevant behavior checks. State what you verified and what remains untested. These recommendations do not establish compatibility, performance or production readiness for your application."
+        "body": "Run the project’s formatting, compilation and relevant behavior checks. For declared module boundaries, configure Boundary and make its warnings fail CI. State what you verified and what remains untested. These recommendations do not establish compatibility, performance or production readiness for your application."
       }
     ]
   }

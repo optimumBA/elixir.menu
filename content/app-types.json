@@ -200,7 +200,7 @@
   ],
   "shared_checks": {
     "title": "Checks for every Mix project",
-    "body": "Use mix format for formatting, address compiler warnings, and test behavior with ExUnit. Add Credo when its static checks provide useful feedback; it is optional for every application type. Keep the same checks in local work and CI.",
+    "body": "Use mix format for formatting, compile with warnings as errors, and test behavior with ExUnit. Add Credo for useful static feedback. Use Boundary when domains or layers need enforced module dependency rules; declare allowed dependencies and exports, enable its Mix compiler, and fail CI on violations. Keep the same checks in local work and CI.",
     "sources": [
       [
         "Mix formatter",
@@ -213,6 +213,10 @@
       [
         "Credo",
         "https://hexdocs.pm/credo/overview.html"
+      ],
+      [
+        "Boundary setup and limits",
+        "https://elixir.menu/#boundary-checks"
       ]
     ]
   },

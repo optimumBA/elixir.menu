@@ -1,5 +1,5 @@
 {
-  "reviewed": "2026-10-06",
+  "reviewed": "2026-10-11",
   "status": "Choose and configure each library against its installed-version documentation.",
   "instruction": "Select an optional tool only when the application's requirements match its use case. Explain the selection, check compatibility with the project's lockfile, and follow its installed-version documentation. Do not install the whole menu.",
   "groups": [
@@ -505,6 +505,30 @@
       "id": "optional-development",
       "title": "Development tools",
       "items": [
+        {
+          "id": "boundary-checks",
+          "job": "Module dependency rules",
+          "tool": "Boundary",
+          "when": "Domains or layers need explicit, compiler-checked dependencies and public module exports. Useful for agent-maintained applications as well as human-maintained code.",
+          "use": "Declare each boundary in its root module with use Boundary, explicit deps and a small exports list. Add the compile-time dependency and compiler below. A boundary always exports its root module; prefer explicit exports over exports: :all. Keep allowed calls aligned with the architecture.",
+          "boundary": "Violations are compiler warnings unless compilation uses --warnings-as-errors. External OTP application calls are allowed by default; opt into selected app checks or strict mode when required. Dynamic calls such as apply/3 are not checked. Boundary enforces static module references; it does not isolate an agent’s files, processes or network access. Libraries can limit the compiler to dev/test as the compiler documentation describes.",
+          "setup": "# In mix.exs deps/0:\n{:boundary, \"~> 0.11\", runtime: false}\n\n# In mix.exs project/0:\ncompilers: [:boundary] ++ Mix.compilers()\n\n# In each domain root module (adapt the names):\nuse Boundary, deps: [MyApp.Accounts], exports: []",
+          "check": "Run mix deps.get, then mix compile --warnings-as-errors in the environments your CI checks. Add a temporary forbidden static call to confirm the check fails, remove it, and rerun successfully. The dependency alone does not enforce boundaries.",
+          "sources": [
+            [
+              "Boundary reference",
+              "https://boundary.hexdocs.pm/Boundary.html"
+            ],
+            [
+              "Boundary installation",
+              "https://boundary.hexdocs.pm/readme.html"
+            ],
+            [
+              "Compiler and CI enforcement",
+              "https://boundary.hexdocs.pm/Mix.Tasks.Compile.Boundary.html"
+            ]
+          ]
+        },
         {
           "id": "ai-development",
           "job": "AI-assisted Phoenix development",
