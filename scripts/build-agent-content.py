@@ -69,7 +69,14 @@ for resource in dist.glob('*.json'):
         data=json.loads(resource.read_text())
         target.write_text('# '+config['name']+' — '+resource.stem+'\n\n```json\n'+json.dumps(data,ensure_ascii=False,indent=2)+'\n```\n\nCanonical resource: '+origin+'/'+resource.name+'\n')
 
-# Existing themed exports and instructions remain authored; append a dedicated, discoverable guide.
+# Agent retrieval guidance has one owner and is published in all discovery paths.
+entry=config['agentEntry']
+agent_md=['# '+config['name']+' — Agent instructions', '', entry['summary'], '', '## Start here', '', entry['prompt'], '']
+for step in entry['steps']:
+    agent_md.extend(['## '+step['title'], '', step['body'], ''])
+agent_md.extend(['## Retrieve a page as Markdown', '', 'Use the direct .md URLs above, or request a public HTML page with this header:', '', '```sh', "curl -fsSL -H 'Accept: text/markdown' https://elixir.menu/", '```', '', 'HTTPS is the normal address. Choose the retrieval tool available in your environment; no alternative URL scheme is required. The site publishes content, not an agent action API.', '', '[Resource index]('+origin+'/llms.txt)', ''])
+(dist/'agents.md').write_text('\n'.join(agent_md))
+# Existing themed exports remain authored; append the generated use guidance.
 llms=dist/'llms.txt';existing=llms.read_text() if llms.exists() else '# '+config['name']+'\n\n'+config['description']+'\n'
 if '## When to use' not in existing:existing+='\n## When to use\n\n'+config['whenToUse']+'\n\n'
 existing+='\n## Public site resources\n\n- [Homepage Markdown]('+origin+'/agent-content/index.md)\n- [About]('+origin+'/about/)\n- [Contact]('+origin+'/contact/)\n- [Privacy]('+origin+'/privacy/)\n- [Sitemap]('+origin+'/sitemap.xml)\n'

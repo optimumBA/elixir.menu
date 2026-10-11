@@ -19,7 +19,7 @@ def render_app_types(stack):
     data = json.loads((ROOT / 'content/app-types.json').read_text())
     optional_html, count = render_optional()
     picker = []; paths = []
-    md = [f'# {data["title"]}', '', f'Reviewed: {data["reviewed"]}.', '', data['status'], '', 'Choose by application requirements. Phoenix and PostgreSQL are conditional choices, not prerequisites for Elixir. Read the project README and preserve existing decisions.', '']
+    md = [f'# {data["title"]}', '', f'Reviewed: {data["reviewed"]}.', '', data['status'], '', 'Agents: first read [the retrieval instructions](https://elixir.menu/agents.md).', '', 'Choose by application requirements. Phoenix and PostgreSQL are conditional choices, not prerequisites for Elixir. Read the project README and preserve existing decisions.', '']
     for item in data['types']:
         picker.append(f'<a href="#{e(item["id"])}"><strong>{e(item["name"])}</strong><span>{e(item["short"])}</span></a>')
         sources = ''.join(f'<a href="{e(url, quote=True)}">{e(label)}</a>' for label, url in item['sources'])

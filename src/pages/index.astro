@@ -2,6 +2,7 @@
 import AgentMetadata from '../components/AgentMetadata.astro';
 import generated from '../../.generated/index.html?raw';
 import site from '../../content/site.json';
+import menuStyles from '../../assets/menu.css?url';
 const body = generated.split('<body>')[1].split('</body>')[0];
 const preview = process.env.SITE_MODE === 'preview';
 const identity = {
@@ -43,7 +44,7 @@ const identity = {
     <link rel="apple-touch-icon" sizes="180x180" href="/brand/apple-touch-icon.png" />
     <link rel="stylesheet" href="/reference.css" />
     <link rel="stylesheet" href="/app-types.css" />
-    <link rel="stylesheet" href="/menu.css" />
+    <link rel="stylesheet" href={menuStyles} />
     <script is:inline src="/reference.js" defer></script>
     {!preview && site.plausibleScriptUrl && <script is:inline src="/analytics.js" data-origin={site.origin} data-script={site.plausibleScriptUrl} defer></script>}
   <AgentMetadata /></head>

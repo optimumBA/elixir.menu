@@ -32,6 +32,8 @@ def render_menu(stack):
     nav=''.join(f'<a href="#{g["id"]}">{e(LABELS[g["id"]])}</a>' for g in stack['groups'])
     values={'PATHS':paths,'SHARED_CHECKS':render_shared_checks(data),'STACK':stack_html,'STACK_COUNT':str(sum(len(g['items']) for g in stack['groups'])),'GROUP_NAV':nav,'OPTIONAL':optional,'AGENT_GUIDANCE':render_agent_guidance(data),'SETUP_STATUS':e(json.loads((ROOT/'content/setup.json').read_text())['status']),'AGENT_STEPS':steps,'SETUP':setup}
     page=(ROOT/'content/menu.html').read_text()
+    entry=json.loads((ROOT/'agent-site.json').read_text())['agentEntry']
+    values['AGENT_ENTRY'] = f'<p class="agent-entry"><strong>{e(entry["title"])}</strong> <a href="/agents.md">{e(entry["label"])}</a></p>'
     values['RUNTIME'] = render_runtime()
     values['FOOTER'] = (ROOT/'content/footer.html').read_text().strip()
     for k,v in values.items():page=page.replace('{{'+k+'}}',v)

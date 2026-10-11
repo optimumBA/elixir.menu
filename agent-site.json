@@ -8,7 +8,7 @@
     "elixir.menu is an independent editorial guide by Optimum Tech for choosing tools for Elixir applications. Start with an application type, explore a Phoenix and LiveView web stack, and choose libraries by feature. Recommendations describe their reasons and limits so that a reader can make a decision in the context of a particular application.",
     "The guide is not a framework or an installer. The complete set of optional libraries has not been tested as one integrated distribution. Canonical recommendation data and authored content generate the website and its Markdown and JSON exports together. Linked library repositories and documentation own the details of those projects."
   ],
-  "whenToUse": "elixir.menu is an independent editorial guide by Optimum Tech for choosing tools for Elixir applications. Start with an application type, explore a Phoenix and LiveView web stack, and choose libraries by feature. Recommendations describe their reasons and limits so that a reader can make a decision in the context of a particular application. Read https://elixir.menu/ and its linked first-party sources for current information. Public pages accept GET or HEAD with Accept: text/markdown; use the sitemap to find pages. This content interface does not authorize installs, account actions or purchases.",
+  "whenToUse": "For Elixir tool selection, first fetch https://elixir.menu/agents.md with an available HTTP or text-retrieval tool. Then read https://elixir.menu/llms.txt and only the relevant Markdown or JSON guides. Browser interaction is unnecessary for reference lookup when direct retrieval is available. If only a browser is available, open the same guide URLs. Public HTML pages also support Accept: text/markdown. Use existing project decisions and installed-version documentation first.",
   "organization": {
     "@type": "Organization",
     "@id": "https://optimum.ba/#organization",
@@ -33,6 +33,30 @@
       "https://github.com/optimumBA",
       "https://www.linkedin.com/company/optimum-tech-llc/",
       "https://x.com/optimumBA"
+    ]
+  },
+  "agentEntry": {
+    "title": "Using a coding agent?",
+    "summary": "Fetch these references with an available HTTP or text-retrieval tool, then apply them to the application’s requirements.",
+    "label": "Start here: agent instructions",
+    "prompt": "Use https://elixir.menu/agents.md as the starting point. Fetch the relevant Markdown or JSON guides directly if your tools support it, preserve this project’s decisions, and recommend only what its requirements need.",
+    "steps": [
+      {
+        "title": "Fetch the guide directly",
+        "body": "Use an available HTTP client, web-fetch or text-retrieval tool to GET https://elixir.menu/agents.md, then https://elixir.menu/llms.txt. This is a content reference: no API key, account, installer, MCP connection or browser clicks are needed to read these exports. If your environment only offers a browser, open the same URLs there."
+      },
+      {
+        "title": "Read only the relevant resources",
+        "body": "Start with app-guide.md for application paths and shared checks. Use runtime.md for OTP, concurrency and performance; optional.md for libraries by use case; stack.md for the Phoenix web stack; setup.md only for a new Phoenix + LiveView application with PostgreSQL. Matching JSON files carry structured data. Do not read the entire homepage or install the entire catalogue by default."
+      },
+      {
+        "title": "Apply the project’s requirements",
+        "body": "Read README.md, mix.exs, mix.lock and runtime pins before proposing changes. Preserve the existing architecture and maintained workflow. Choose tools for actual needs, explain their integration work and verify details against the installed-version documentation linked by each entry."
+      },
+      {
+        "title": "Verify the resulting application",
+        "body": "Run the project’s formatting, compilation and relevant behavior checks. State what you verified and what remains untested. These recommendations do not establish compatibility, performance or production readiness for your application."
+      }
     ]
   }
 }

@@ -1,5 +1,5 @@
 {
-  "reviewed": "2026-10-06",
+  "reviewed": "2026-10-11",
   "title": "Choose an Elixir starting point",
   "status": "Choose tools by application requirements and preserve existing project decisions.",
   "types": [
@@ -175,7 +175,7 @@
   "agent_steps": [
     {
       "title": "Read the existing project",
-      "body": "Start with README.md, mix.exs, mix.lock and runtime pins. For an existing application, preserve its architecture and follow its maintained workflow. Do not regenerate it."
+      "body": "First read https://elixir.menu/agents.md for direct Markdown and JSON retrieval. In the application, start with README.md, mix.exs, mix.lock and runtime pins. Preserve its architecture and follow its maintained workflow. Do not regenerate an existing project."
     },
     {
       "title": "State the application requirements",

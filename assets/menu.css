@@ -12,3 +12,5 @@ body{font-family:"Rethink Sans",system-ui,sans-serif;line-height:1.65}html{scrol
 /* Information pages share the menu's identity and footer. */
 .information-page{padding-top:40px}.information-back{display:inline-block;color:var(--purple);font-size:14px;margin-bottom:32px}.information-copy{max-width:720px}.information-copy h1{font-size:clamp(36px,4.3vw,52px);margin-bottom:28px}.information-copy h2{font-size:24px;letter-spacing:-.5px;margin-top:32px;margin-bottom:14px}.information-copy p{color:var(--muted);margin-bottom:20px}.information-copy a{color:var(--purple)}
 @media(max-width:760px){.information-page{padding-top:28px}.information-back{margin-bottom:26px}.information-copy h1{font-size:40px}.information-copy h2{font-size:22px}}
+
+.agent-entry{margin-top:1.25rem;font-size:.9375rem;line-height:1.6}.agent-entry a{display:inline-block;margin-left:.35rem}

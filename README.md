@@ -7,6 +7,7 @@ Start with one of seven application types, explore a preferred Phoenix + LiveVie
 ## Read the guide
 
 - [Website](https://elixir.menu/)
+- [Start here for agents](https://elixir.menu/agents.md)
 - [Application guide](https://elixir.menu/app-guide.md)
 - [Phoenix setup recipe](https://elixir.menu/setup.md)
 - [All Markdown and JSON exports](https://elixir.menu/llms.txt)

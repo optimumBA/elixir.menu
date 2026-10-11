@@ -1,6 +1,10 @@
 # elixir.menu
 
-> An independent guide to Elixir application paths, optional libraries and a Phoenix-specific web stack. Reviewed 2026-10-06. Choose tools by application requirements; preserve existing project decisions.
+> An independent guide to Elixir application paths, optional libraries and a Phoenix-specific web stack. Reviewed 2026-10-11. Choose tools by application requirements; preserve existing project decisions.
+
+## Start here for agents
+
+Fetch [agent instructions](https://elixir.menu/agents.md) first, then choose the relevant exports below. Use direct HTTP or text retrieval when available; a browser can open the same resources if needed.
 
 ## References
 - [OTP, concurrency and performance](./runtime.md): Built-in state, tasks, supervision, shared memory and pipeline choices.

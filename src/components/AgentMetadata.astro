@@ -8,5 +8,6 @@ const identity = { '@context':'https://schema.org', '@graph': [page, site.organi
 ---
 <meta name="is-agentic-site-type" content={site.siteType} />
 <link rel="alternate" type="text/markdown" href={new URL(markdownPath, site.origin).href} title="Markdown representation" />
+<link rel="help" href={`${site.origin}/agents.md`} type="text/markdown" title="Agent instructions" />
 <link rel="help" href={`${site.origin}/llms.txt`} type="text/plain" />
 {isHome && <script is:inline type="application/ld+json" set:html={JSON.stringify(identity).replace(/</g, '\u003c')} />}
