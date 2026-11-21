@@ -79,7 +79,7 @@ agent_md.extend(['## Retrieve a page as Markdown', '', 'Use the direct .md URLs 
 # Existing themed exports remain authored; append the generated use guidance.
 llms=dist/'llms.txt';existing=llms.read_text() if llms.exists() else '# '+config['name']+'\n\n'+config['description']+'\n'
 if '## When to use' not in existing:existing+='\n## When to use\n\n'+config['whenToUse']+'\n\n'
-existing+='\n## Public site resources\n\n- [Homepage Markdown]('+origin+'/agent-content/index.md)\n- [About]('+origin+'/about/)\n- [Contact]('+origin+'/contact/)\n- [Privacy]('+origin+'/privacy/)\n- [Sitemap]('+origin+'/sitemap.xml)\n'
+existing+='\n## Public site resources\n\n- [Homepage Markdown]('+origin+'/agent-content/index.md)\n- [About]('+origin+'/about/)\n- [Contact]('+origin+'/contact/)\n- [Privacy]('+origin+'/privacy/)\n- [Sitemap]('+origin+'/sitemap.xml)\n\n## Business information\n\n- [Sponsors]('+origin+'/sponsors/): A sponsor is optional and disclosed, and the user keeps the choice; no sponsor is active.\n'
 llms.write_text(existing)
 headers=dist/'_headers';body=headers.read_text() if headers.exists() else ''
 if '/*.md\n  Content-Type: text/markdown;' not in body:body+='\n/*.md\n  Content-Type: text/markdown; charset=utf-8\n'
@@ -95,7 +95,7 @@ if sitemap.exists():
     if node.tag.endswith('urlset'):
         namespace=node.tag.removesuffix('urlset');ET.register_namespace('',namespace.strip('{}')) if namespace else None
         known={e.text for e in node.iter() if e.tag.endswith('loc')}
-        for path in ['/about/','/contact/','/privacy/']:
+        for path in ['/about/','/contact/','/privacy/','/sponsors/']:
             url=origin+path
             if url not in known:
                 entry=ET.SubElement(node,namespace+'url');ET.SubElement(entry,namespace+'loc').text=url
