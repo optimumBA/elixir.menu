@@ -1,0 +1,13 @@
+models:
+  shape:
+    provider: chatgpt
+    model: gpt-6.1-sol
+    effort: high
+  build:
+    provider: chatgpt
+    model: gpt-6.1-sol
+    effort: medium
+  review:
+    provider: chatgpt
+    model: gpt-6.1-terra
+    effort: medium

@@ -21,3 +21,4 @@ public/robots.txt
 public/sitemap.xml
 public/favicon.ico
 .wrangler/
+.kogen/local/
