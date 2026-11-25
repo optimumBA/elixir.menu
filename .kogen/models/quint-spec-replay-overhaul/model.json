@@ -1,0 +1,10 @@
+{
+  "None": false,
+  "Path": ".kogen/models/quint-spec-replay-overhaul/model.qnt",
+  "Invariants": [
+    "consistent"
+  ],
+  "Seed": "1",
+  "Samples": "1",
+  "Steps": "5"
+}
